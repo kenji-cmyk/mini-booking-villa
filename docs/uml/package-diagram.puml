@@ -20,14 +20,17 @@ package "vstay" {
     class VillaService
     class BookingService
     class PaymentService
+  }
 
+  package "payment" {
     class PaymentStrategyFactory
 
     interface PaymentStrategy
 
     class MomoPaymentStrategy
     class VNPayPaymentStrategy
-}
+  }
+
   package "repository" {
 
     interface VillaRepository
@@ -42,6 +45,9 @@ package "vstay" {
     class Villa
     class Booking
     class Payment
+  }
+
+  package "enums" {
 
     enum Role
     enum BookingStatus
