@@ -1,0 +1,171 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+package "vstay" {
+
+  package "controller" {
+
+    class VillaController
+    class BookingController
+    class PaymentController
+
+    class AdminVillaController
+    class AdminBookingController
+  }
+
+  package "service" {
+
+    class VillaService
+    class BookingService
+    class PaymentService
+
+    class PaymentStrategyFactory
+
+    interface PaymentStrategy
+
+    class MomoPaymentStrategy
+    class VNPayPaymentStrategy
+}
+  package "repository" {
+
+    interface VillaRepository
+    interface BookingRepository
+    interface PaymentRepository
+    interface UserRepository
+  }
+
+  package "entity" {
+
+    class User
+    class Villa
+    class Booking
+    class Payment
+
+    enum Role
+    enum BookingStatus
+    enum PaymentStatus
+  }
+
+  package "dto" {
+
+    class VillaResponse
+    class BookingRequest
+    class BookingResponse
+
+    class PaymentRequest
+    class PaymentResponse
+
+    class CreateVillaRequest
+    class UpdateVillaRequest
+  }
+
+  package "mapper" {
+
+    class VillaMapper
+    class BookingMapper
+    class PaymentMapper
+  }
+
+  package "exception" {
+
+    class NotFoundException
+    class ValidationException
+    class BookingConflictException
+    class AccessDeniedException
+  }
+
+  package "config" {
+
+    class SecurityConfig
+  }
+}
+
+' =========================
+' CONTROLLER -> SERVICE
+' =========================
+
+VillaController --> VillaService
+BookingController --> BookingService
+PaymentController --> PaymentService
+
+AdminVillaController --> VillaService
+AdminBookingController --> BookingService
+
+' =========================
+' SERVICE -> REPOSITORY
+' =========================
+
+VillaService --> VillaRepository
+BookingService --> BookingRepository
+PaymentService --> PaymentRepository
+BookingService --> VillaRepository
+
+' =========================
+' SERVICE -> ENTITY
+' =========================
+
+VillaService --> Villa
+BookingService --> Booking
+PaymentService --> Payment
+
+' =========================
+' DTO RELATIONSHIPS
+' =========================
+
+VillaController --> VillaResponse
+
+BookingController --> BookingRequest
+BookingController --> BookingResponse
+
+PaymentController --> PaymentRequest
+PaymentController --> PaymentResponse
+
+AdminVillaController --> CreateVillaRequest
+AdminVillaController --> UpdateVillaRequest
+
+' =========================
+' MAPPER RELATIONSHIPS
+' =========================
+
+VillaService --> VillaMapper
+BookingService --> BookingMapper
+PaymentService --> PaymentMapper
+
+VillaMapper --> Villa
+BookingMapper --> Booking
+PaymentMapper --> Payment
+
+' =========================
+' STRATEGY PATTERN
+' =========================
+
+PaymentService --> PaymentStrategyFactory
+
+PaymentStrategyFactory --> PaymentStrategy
+
+PaymentStrategy <|.. MomoPaymentStrategy
+PaymentStrategy <|.. VNPayPaymentStrategy
+
+PaymentService --> PaymentStrategy
+
+' =========================
+' EXCEPTION HANDLING
+' =========================
+
+VillaService --> ValidationException
+BookingService --> BookingConflictException
+PaymentService --> ValidationException
+
+' =========================
+' SECURITY
+' =========================
+
+SecurityConfig --> Role
+User --> Role
+
+Booking --> BookingStatus
+Payment --> PaymentStatus
+
+@enduml

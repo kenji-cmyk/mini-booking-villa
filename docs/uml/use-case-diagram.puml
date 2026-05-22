@@ -1,0 +1,49 @@
+@startuml
+left to right direction
+
+actor Guest
+actor Admin
+
+rectangle "VStay Villa Booking System" {
+
+  usecase "UC-01\nView Villas" as UC01
+  usecase "UC-02\nSearch and Filter Villas" as UC02
+  usecase "UC-03\nView Villa Details" as UC03
+
+  usecase "UC-04\nCreate Booking" as UC04
+  usecase "Validate Booking Information" as UC04A
+  usecase "Check Villa Availability" as UC04B
+
+  usecase "UC-05\nView Booking Details" as UC05
+  usecase "UC-06\nCancel Booking" as UC06
+  usecase "UC-07\nMake Payment" as UC07
+  usecase "UC-08\nView Payment Status" as UC08
+
+  usecase "UC-09\nCreate Villa" as UC09
+  usecase "UC-10\nUpdate Villa" as UC10
+  usecase "UC-11\nDelete Villa" as UC11
+  usecase "UC-12\nView Villa List" as UC12
+  usecase "UC-13\nView All Bookings" as UC13
+  usecase "UC-14\nUpdate Booking Status" as UC14
+}
+
+Guest --> UC01
+Guest --> UC02
+Guest --> UC03
+Guest --> UC04
+Guest --> UC05
+Guest --> UC06
+Guest --> UC07
+Guest --> UC08
+
+Admin --> UC09
+Admin --> UC10
+Admin --> UC11
+Admin --> UC12
+Admin --> UC13
+Admin --> UC14
+
+UC04 ..> UC04A : <<include>>
+UC04 ..> UC04B : <<include>>
+
+@enduml
