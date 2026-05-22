@@ -2,13 +2,13 @@
 
 ## 1. Repository Overview
 
-This repository contains the software design documentation and implementation prototype for VStay, a simple villa booking system. The project was created for a university-level Software Design (SWD) assignment to demonstrate core software engineering principles, including requirements analysis, system design, and implementation.
+This repository contains the software design documentation and backend scaffold for VStay, a simple villa booking system. The project was created for a university-level Software Design (SWD) assignment to demonstrate core software engineering principles, including requirements analysis, system design, and implementation planning.
 
 The primary purpose of this repository is to:
 
-1.  **Store software engineering documents:** Centralize all design artifacts, including requirements specifications and UML diagrams.
-2.  **Demonstrate the software design process:** Document the journey from requirements to a functional prototype.
-3.  **Provide an implementation prototype:** Offer a lightweight, demonstrable version of the system's core features.
+1.  **Store software engineering documents:** Centralize the main analysis and design artifacts, including requirements specifications and UML diagrams.
+2.  **Demonstrate the software design process:** Document the journey from project scope and requirements to system structure.
+3.  **Prepare an implementation prototype:** Provide a Spring Boot backend structure that can be extended into the system's core features.
 
 This project is an academic exercise and is **not** intended to be a production-ready commercial system.
 
@@ -31,51 +31,55 @@ VStay is a web-based platform that allows guests to find and book villas, while 
 
 | User Type | Description |
 |-----------|--------------------------------------------------------------------------------------------------------------------|
-| **Guest** | A person who wants to browse villas, make a booking, cancel a booking, and view booking or payment information.      |
-| **Admin** | A system user responsible for managing villa records and booking status.                                            |
+| **Guest** | A person who wants to browse villas, make a booking, cancel a booking, make payment, and view booking or payment information. |
+| **Admin** | A system user responsible for managing villa records and updating booking status.                                  |
 
 ## 3. Software Design Artifacts
 
-This repository includes key software design artifacts that illustrate the system's architecture and behavior. The following UML diagrams are planned as part of the design documentation:
+This repository currently includes the Day 2 documentation artifacts for requirements analysis and early system design:
 
-*   **Use Case Diagram:** To visualize the interactions between actors (Guests, Admins) and the system.
-*   **Sequence Diagrams:** To model the logic for key scenarios like creating a booking or managing a villa.
-*   **Package Diagram:** To show the organization of the system into logical groups.
-*   **Class Diagram:** To describe the structure of the system by showing its classes, attributes, operations, and relationships.
+*   **Introduction:** Describes the project background, problem statement, objectives, target users, scope, out-of-scope items, and expected outcome.
+*   **Requirements Specification:** Defines functional requirements, non-functional requirements, use cases, business rules, assumptions, and constraints.
+*   **Use Case Diagram:** Visualizes the interactions between the Guest/Admin actors and the system.
+*   **Package Diagram:** Shows the planned backend organization using a layered Spring Boot structure.
 
-These artifacts are located in the `docs/` directory.
+The Markdown documentation is located in `docs/md/`, and the PlantUML diagram sources are located in `docs/uml/`.
 
 ## 4. Repository Structure
 
-The repository is organized to separate documentation from the implementation codebase.
+The repository is organized to separate documentation from the backend codebase.
 
-```
+```text
 .
-├── README.md
-├── backend/              # Spring Boot implementation prototype
-│   ├── src/
-│   └── pom.xml
-├── docs/                 # Software design and requirements documents
-│   ├── diagrams/         # UML diagrams and other visual artifacts
-│   └── ...
-└── report/               # Final assignment report materials
+|-- README.md
+|-- asset/
+|-- backend/              # Spring Boot backend scaffold
+|   |-- src/
+|   |-- mvnw
+|   |-- mvnw.cmd
+|   `-- pom.xml
+|-- docs/                 # Software design and requirements documents
+|   |-- md/               # Markdown documentation for Day 2
+|   `-- uml/              # PlantUML diagram source files
+`-- report/               # Final assignment report materials
 ```
 
 ## 5. Technology Stack
 
-The implementation prototype is built with a lightweight and modern technology stack suitable for demonstration.
+The current backend scaffold is configured with:
 
-*   **Backend:** Java 17, Spring Boot 3
-*   **Database:** H2 InMemory Database
-*   **Build Tool:** Apache Maven
+*   **Backend:** Java 25, Spring Boot 4.0.6
+*   **Build Tool:** Apache Maven / Maven Wrapper
+
+The backend currently contains the package/class skeleton aligned with the package diagram. API endpoints, persistence behavior, and full business logic are still planned implementation work.
 
 ## 6. Setup and Usage
 
-The following instructions are for setting up and running the backend prototype.
+The following instructions are for setting up and running the backend scaffold.
 
 **Prerequisites:**
-*   Java JDK 17 or later
-*   Apache Maven 3.8 or later
+*   Java JDK 25 or a compatible version for the current `pom.xml`
+*   Apache Maven 3.8 or later, or the included Maven Wrapper
 
 **Running the application:**
 
@@ -91,22 +95,32 @@ The following instructions are for setting up and running the backend prototype.
     ```sh
     mvn spring-boot:run
     ```
-The application will be accessible at `http://localhost:8080`.
+
+On Windows, the Maven Wrapper can also be used:
+
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
 
 ## 7. Project Status & Roadmap
 
-This project is currently in the **design and development phase**. The focus is on completing the required documentation and implementing the core features for the prototype.
+This project is currently in the **requirements and early design phase**. The Day 2 files are focused on requirements, use case modeling, and package-level backend design.
 
 *   [x] **Phase 1: Requirements & Analysis**
     *   [x] Define project scope and objectives.
     *   [x] Create functional and non-functional requirements.
     *   [x] Develop use case list and business rules.
-*   [ ] **Phase 2: System Design**
-    *   [ ] Create Use Case Diagram.
-    *   [ ] Create Sequence, Package, and Class Diagrams.
+*   [x] **Phase 2: Initial System Design**
+    *   [x] Create Use Case Diagram.
+    *   [x] Create Package Diagram.
+    *   [x] Create backend package/class skeleton.
+*   [ ] **Phase 3: Detailed Design**
+    *   [ ] Create Sequence Diagrams.
+    *   [ ] Create Class Diagram.
     *   [ ] Finalize database schema.
-*   [ ] **Phase 3: Implementation & Demonstration**
+*   [ ] **Phase 4: Implementation & Demonstration**
     *   [ ] Implement core backend features for Guest and Admin.
     *   [ ] Prepare demonstration materials.
-*   [ ] **Phase 4: Final Report**
+*   [ ] **Phase 5: Final Report**
     *   [ ] Compile all documentation into the final assignment report.
