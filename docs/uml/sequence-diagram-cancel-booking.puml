@@ -1,0 +1,23 @@
+@startuml
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+actor Guest
+participant "VStay System" as System
+database "Stored Data" as Data
+
+Guest -> System: Request booking cancellation
+System -> Data: Load booking
+Data --> System: Booking details
+System -> System: Check cancellation eligibility
+
+alt Booking can be cancelled
+  System -> Data: Update booking status to CANCELLED
+  Data --> System: Updated booking
+  System --> Guest: Show cancelled booking
+else Booking cannot be cancelled
+  System --> Guest: Show validation message
+end
+
+@enduml

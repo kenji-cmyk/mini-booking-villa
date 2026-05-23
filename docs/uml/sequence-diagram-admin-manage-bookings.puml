@@ -1,0 +1,21 @@
+@startuml
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+actor Admin
+participant "VStay System" as System
+database "Stored Data" as Data
+
+Admin -> System: Request all bookings
+System -> Data: Load bookings
+Data --> System: Booking list
+System --> Admin: Show booking list
+
+Admin -> System: Update booking status
+System -> System: Validate status change
+System -> Data: Save updated booking status
+Data --> System: Updated booking
+System --> Admin: Show updated booking
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+actor Guest
+participant "VStay System" as System
+database "Stored Data" as Data
+
+Guest -> System: Submit booking information
+System -> System: Validate dates, guest count, and contact information
+System -> Data: Check villa availability
+Data --> System: Availability result
+
+alt Villa is not available
+  System --> Guest: Show booking conflict message
+else Villa is available
+  System -> Data: Save booking with PENDING status
+  Data --> System: Saved booking
+  System --> Guest: Show booking details
+end
+
+@enduml

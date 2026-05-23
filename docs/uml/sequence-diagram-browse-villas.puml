@@ -1,0 +1,20 @@
+@startuml
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+actor Guest
+participant "VStay System" as System
+database "Stored Data" as Data
+
+Guest -> System: Request villa list or search result
+System -> Data: Load matching villas
+Data --> System: Villa list
+System --> Guest: Show villas
+
+Guest -> System: Select villa
+System -> Data: Load villa details
+Data --> System: Villa details
+System --> Guest: Show villa details
+
+@enduml

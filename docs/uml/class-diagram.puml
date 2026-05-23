@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class User {
+  - id: Long
+  - fullName: String
+  - email: String
+  - phone: String
+  - role: Role
+  + isAdmin(): boolean
+  + isGuest(): boolean
+}
+
+class Villa {
+  - id: Long
+  - name: String
+  - location: String
+  - description: String
+  - pricePerNight: BigDecimal
+  - capacity: int
+  - active: boolean
+  + updateInfo(): void
+  + deactivate(): void
+}
+
+class Booking {
+  - id: Long
+  - checkInDate: LocalDate
+  - checkOutDate: LocalDate
+  - numberOfGuests: int
+  - contactName: String
+  - contactPhone: String
+  - status: BookingStatus
+  + confirm(): void
+  + cancel(): void
+  + complete(): void
+  + isActive(): boolean
+}
+
+class Payment {
+  - id: Long
+  - provider: String
+  - amount: BigDecimal
+  - status: PaymentStatus
+  - transactionCode: String
+  - paidAt: LocalDateTime
+  + markSuccessful(): void
+  + markFailed(): void
+}
+
+enum Role {
+  GUEST
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+}
+
+User "1" --> "0..*" Booking : creates
+Villa "1" --> "0..*" Booking : is booked in
+Booking "1" --> "0..1" Payment : has
+
+User --> Role
+Booking --> BookingStatus
+Payment --> PaymentStatus
+
+@enduml

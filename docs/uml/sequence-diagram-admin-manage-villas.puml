@@ -1,0 +1,28 @@
+@startuml
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+actor Admin
+participant "VStay System" as System
+database "Stored Data" as Data
+
+Admin -> System: Create or update villa information
+System -> System: Validate villa information
+System -> Data: Save villa information
+Data --> System: Saved villa
+System --> Admin: Show updated villa list
+
+Admin -> System: Delete villa
+System -> Data: Check active bookings for villa
+Data --> System: Active booking result
+
+alt Villa has active booking
+  System --> Admin: Reject villa deletion
+else Villa has no active booking
+  System -> Data: Delete villa
+  Data --> System: Villa deleted
+  System --> Admin: Show updated villa list
+end
+
+@enduml
