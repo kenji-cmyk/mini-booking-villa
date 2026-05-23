@@ -36,12 +36,23 @@ VStay is a web-based platform that allows guests to find and book villas, while 
 
 ## 3. Software Design Artifacts
 
-This repository currently includes the Day 2 documentation artifacts for requirements analysis and early system design:
+This repository currently includes documentation artifacts for requirements analysis, initial system design, and detailed UML design:
 
 *   **Introduction:** Describes the project background, problem statement, objectives, target users, scope, out-of-scope items, and expected outcome.
 *   **Requirements Specification:** Defines functional requirements, non-functional requirements, use cases, business rules, assumptions, and constraints.
 *   **Use Case Diagram:** Visualizes the interactions between the Guest/Admin actors and the system.
 *   **Package Diagram:** Shows the planned backend organization using a layered Spring Boot structure.
+*   **Class Diagram:** Describes the core domain classes, attributes, methods, enums, and relationships.
+*   **Sequence Diagrams:** Describe the main guest and admin workflows using separated, focused diagrams.
+
+The current sequence diagrams are separated into:
+
+*   Browse and view villas.
+*   Create booking.
+*   Cancel booking.
+*   Make payment and view payment status.
+*   Admin manage villas.
+*   Admin manage bookings.
 
 The Markdown documentation is located in `docs/md/`, and the PlantUML diagram sources are located in `docs/uml/`.
 
@@ -59,7 +70,7 @@ The repository is organized to separate documentation from the backend codebase.
 |   |-- mvnw.cmd
 |   `-- pom.xml
 |-- docs/                 # Software design and requirements documents
-|   |-- md/               # Markdown documentation for Day 2
+|   |-- md/               # Markdown documentation
 |   `-- uml/              # PlantUML diagram source files
 `-- report/               # Final assignment report materials
 ```
@@ -71,7 +82,7 @@ The current backend scaffold is configured with:
 *   **Backend:** Java 25, Spring Boot 4.0.6
 *   **Build Tool:** Apache Maven / Maven Wrapper
 
-The backend currently contains the package/class skeleton aligned with the package diagram. API endpoints, persistence behavior, and full business logic are still planned implementation work.
+The backend currently contains the package/class skeleton aligned with the package diagram. Domain design and workflow diagrams have been added, while API endpoints, persistence behavior, and full business logic are still planned implementation work.
 
 ## 6. Setup and Usage
 
@@ -105,7 +116,7 @@ cd backend
 
 ## 7. Project Status & Roadmap
 
-This project is currently in the **requirements and early design phase**. The Day 2 files are focused on requirements, use case modeling, and package-level backend design.
+This project is currently in the **detailed design phase**. Requirements, use case modeling, package-level backend design, class design, and sequence workflow design have been documented.
 
 *   [x] **Phase 1: Requirements & Analysis**
     *   [x] Define project scope and objectives.
@@ -116,11 +127,15 @@ This project is currently in the **requirements and early design phase**. The Da
     *   [x] Create Package Diagram.
     *   [x] Create backend package/class skeleton.
 *   [ ] **Phase 3: Detailed Design**
-    *   [ ] Create Sequence Diagrams.
-    *   [ ] Create Class Diagram.
+    *   [x] Create Class Diagram.
+    *   [x] Create Sequence Diagrams.
     *   [ ] Finalize database schema.
-*   [ ] **Phase 4: Implementation & Demonstration**
+*   [ ] **Phase 4: Design Pattern Documentation**
+    *   [ ] Explain design patterns used in the codebase.
+    *   [ ] Document why each pattern is used.
+    *   [ ] Connect each pattern to the related package, class, and workflow.
+*   [ ] **Phase 5: Implementation & Demonstration**
     *   [ ] Implement core backend features for Guest and Admin.
     *   [ ] Prepare demonstration materials.
-*   [ ] **Phase 5: Final Report**
+*   [ ] **Phase 6: Final Report**
     *   [ ] Compile all documentation into the final assignment report.
