@@ -1,0 +1,63 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+package "Service Layer" #LightGreen {
+  class VillaService
+  class BookingService
+  class PaymentService
+}
+
+package "Repository Layer" #LightYellow {
+  interface VillaRepository {
+    + findAll(): List~Villa~
+    + findById(id: Long): Optional~Villa~
+    + save(villa: Villa): Villa
+    + deleteById(id: Long): void
+  }
+
+  interface BookingRepository {
+    + findAll(): List~Booking~
+    + findById(id: Long): Optional~Booking~
+    + save(booking: Booking): Booking
+    + findByVillaId(villaId: Long): List~Booking~
+  }
+
+  interface PaymentRepository {
+    + findById(id: Long): Optional~Payment~
+    + save(payment: Payment): Payment
+    + findByBookingId(bookingId: Long): Optional~Payment~
+  }
+
+  interface UserRepository {
+    + findById(id: Long): Optional~User~
+    + findByEmail(email: String): Optional~User~
+  }
+}
+
+package "Database" #LightCoral {
+  class "PostgreSQL" as DB <<database>>
+}
+
+VillaService --> VillaRepository : uses
+BookingService --> BookingRepository : uses
+BookingService --> VillaRepository : uses
+PaymentService --> PaymentRepository : uses
+
+VillaRepository --> DB : persists
+BookingRepository --> DB : persists
+PaymentRepository --> DB : persists
+UserRepository --> DB : persists
+
+note bottom of VillaRepository
+Repository Pattern:
+Each repository interface
+abstracts database access.
+
+Service classes do not
+write SQL or manage
+database connections.
+end note
+
+@enduml

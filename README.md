@@ -36,7 +36,7 @@ VStay is a web-based platform that allows guests to find and book villas, while 
 
 ## 3. Software Design Artifacts
 
-This repository currently includes documentation artifacts for requirements analysis, initial system design, and detailed UML design:
+This repository currently includes documentation artifacts for requirements analysis, initial system design, detailed UML design, database schema, and design pattern documentation:
 
 *   **Introduction:** Describes the project background, problem statement, objectives, target users, scope, out-of-scope items, and expected outcome.
 *   **Requirements Specification:** Defines functional requirements, non-functional requirements, use cases, business rules, assumptions, and constraints.
@@ -44,6 +44,8 @@ This repository currently includes documentation artifacts for requirements anal
 *   **Package Diagram:** Shows the planned backend organization using a layered Spring Boot structure.
 *   **Class Diagram:** Describes the core domain classes, attributes, methods, enums, and relationships.
 *   **Sequence Diagrams:** Describe the main guest and admin workflows using separated, focused diagrams.
+*   **Database Schema:** Defines the PostgreSQL database tables, columns, data types, constraints, and relationships.
+*   **Design Patterns:** Documents the five design patterns used in the codebase with rationale, code mapping, and UML diagrams.
 
 The current sequence diagrams are separated into:
 
@@ -82,7 +84,7 @@ The current backend scaffold is configured with:
 *   **Backend:** Java 25, Spring Boot 4.0.6
 *   **Build Tool:** Apache Maven / Maven Wrapper
 
-The backend currently contains the package/class skeleton aligned with the package diagram. Domain design and workflow diagrams have been added, while API endpoints, persistence behavior, and full business logic are still planned implementation work.
+The backend currently contains the package/class skeleton aligned with the package diagram. Domain design, workflow diagrams, database schema, and design pattern documentation have been completed. API endpoints, persistence behavior, and full business logic are still planned implementation work.
 
 ## 6. Setup and Usage
 
@@ -116,7 +118,7 @@ cd backend
 
 ## 7. Project Status & Roadmap
 
-This project is currently in the **detailed design phase**. Requirements, use case modeling, package-level backend design, class design, and sequence workflow design have been documented.
+This project is currently in the **design pattern documentation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, and design pattern documentation have been completed.
 
 *   [x] **Phase 1: Requirements & Analysis**
     *   [x] Define project scope and objectives.
@@ -126,14 +128,14 @@ This project is currently in the **detailed design phase**. Requirements, use ca
     *   [x] Create Use Case Diagram.
     *   [x] Create Package Diagram.
     *   [x] Create backend package/class skeleton.
-*   [ ] **Phase 3: Detailed Design**
+*   [x] **Phase 3: Detailed Design**
     *   [x] Create Class Diagram.
     *   [x] Create Sequence Diagrams.
-    *   [ ] Finalize database schema.
-*   [ ] **Phase 4: Design Pattern Documentation**
-    *   [ ] Explain design patterns used in the codebase.
-    *   [ ] Document why each pattern is used.
-    *   [ ] Connect each pattern to the related package, class, and workflow.
+    *   [x] Finalize database schema.
+*   [x] **Phase 4: Design Pattern Documentation**
+    *   [x] Explain design patterns used in the codebase.
+    *   [x] Document why each pattern is used.
+    *   [x] Connect each pattern to the related package, class, and workflow.
 *   [ ] **Phase 5: Implementation & Demonstration**
     *   [ ] Implement core backend features for Guest and Admin.
     *   [ ] Prepare demonstration materials.

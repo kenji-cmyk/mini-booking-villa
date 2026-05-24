@@ -1,0 +1,37 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class PaymentService {
+  - paymentStrategy: PaymentStrategy
+  + processPayment(request): PaymentResult
+}
+
+interface PaymentStrategy <<interface>> {
+  + pay(amount: BigDecimal, bookingId: Long): PaymentResult
+  + getProviderName(): String
+}
+
+class MomoPaymentStrategy {
+  + pay(amount: BigDecimal, bookingId: Long): PaymentResult
+  + getProviderName(): String
+}
+
+class VNPayPaymentStrategy {
+  + pay(amount: BigDecimal, bookingId: Long): PaymentResult
+  + getProviderName(): String
+}
+
+PaymentService --> PaymentStrategy : uses
+
+PaymentStrategy <|.. MomoPaymentStrategy : implements
+PaymentStrategy <|.. VNPayPaymentStrategy : implements
+
+note right of PaymentStrategy
+  Strategy Pattern:
+  PaymentService does not depend
+  on a specific payment provider.
+  The strategy is selected at runtime.
+end note
+
+@enduml

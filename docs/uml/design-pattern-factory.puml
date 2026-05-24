@@ -1,0 +1,45 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+class PaymentService {
+  - factory: PaymentStrategyFactory
+  + processPayment(request): PaymentResult
+}
+
+class PaymentStrategyFactory {
+  + getStrategy(providerName: String): PaymentStrategy
+}
+
+interface PaymentStrategy <<interface>> {
+  + pay(amount: BigDecimal, bookingId: Long): PaymentResult
+  + getProviderName(): String
+}
+
+class MomoPaymentStrategy {
+  + pay(amount: BigDecimal, bookingId: Long): PaymentResult
+  + getProviderName(): String
+}
+
+class VNPayPaymentStrategy {
+  + pay(amount: BigDecimal, bookingId: Long): PaymentResult
+  + getProviderName(): String
+}
+
+PaymentService --> PaymentStrategyFactory : delegates creation to
+PaymentStrategyFactory --> PaymentStrategy : creates
+
+PaymentStrategy <|.. MomoPaymentStrategy : implements
+PaymentStrategy <|.. VNPayPaymentStrategy : implements
+
+note right of PaymentStrategyFactory
+  Factory Pattern:
+  Encapsulates the logic
+  for selecting a payment
+  strategy by provider name.
+  PaymentService only knows
+  the factory, not the
+  concrete strategies.
+end note
+
+@enduml

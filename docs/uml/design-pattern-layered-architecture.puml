@@ -1,0 +1,58 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+package "Presentation Layer" #LightBlue {
+  class VillaController
+  class BookingController
+  class PaymentController
+  class AdminVillaController
+  class AdminBookingController
+}
+
+package "Business Logic Layer" #LightGreen {
+  class VillaService
+  class BookingService
+  class PaymentService
+  class PaymentStrategyFactory
+  interface PaymentStrategy
+  class MomoPaymentStrategy
+  class VNPayPaymentStrategy
+}
+
+package "Data Access Layer" #LightYellow {
+  interface VillaRepository
+  interface BookingRepository
+  interface PaymentRepository
+  interface UserRepository
+}
+
+package "Domain Layer" #LightCoral {
+  class User
+  class Villa
+  class Booking
+  class Payment
+  enum Role
+  enum BookingStatus
+  enum PaymentStatus
+}
+
+package "Cross-Cutting Concerns" #LightGray {
+  class SecurityConfig
+  class NotFoundException
+  class ValidationException
+  class BookingConflictException
+  class AccessDeniedException
+  class VillaMapper
+  class BookingMapper
+  class PaymentMapper
+}
+
+"Presentation Layer" -[#blue]-> "Business Logic Layer" : depends on
+"Business Logic Layer" -[#green]-> "Data Access Layer" : depends on
+"Data Access Layer" -[#orange]-> "Domain Layer" : depends on
+"Presentation Layer" -[#gray]-> "Cross-Cutting Concerns" : uses
+"Business Logic Layer" -[#gray]-> "Cross-Cutting Concerns" : uses
+
+@enduml

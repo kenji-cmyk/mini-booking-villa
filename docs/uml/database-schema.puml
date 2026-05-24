@@ -1,0 +1,62 @@
+@startuml
+skinparam shadowing false
+skinparam linetype ortho
+
+!define table(x) entity x << (T,#AADDFF) >>
+!define pk(x) <b><u>x</u></b>
+!define fk(x) <i>x</i>
+
+table(users) {
+  pk(id) : BIGSERIAL
+  --
+  full_name : VARCHAR(100) NOT NULL
+  email : VARCHAR(150) NOT NULL UNIQUE
+  phone : VARCHAR(20)
+  role : VARCHAR(10) NOT NULL
+}
+
+table(villas) {
+  pk(id) : BIGSERIAL
+  --
+  name : VARCHAR(150) NOT NULL
+  location : VARCHAR(255) NOT NULL
+  description : TEXT
+  price_per_night : NUMERIC(12,2) NOT NULL
+  capacity : INTEGER NOT NULL
+  active : BOOLEAN NOT NULL DEFAULT TRUE
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP
+}
+
+table(bookings) {
+  pk(id) : BIGSERIAL
+  --
+  fk(user_id) : BIGINT NOT NULL
+  fk(villa_id) : BIGINT NOT NULL
+  check_in_date : DATE NOT NULL
+  check_out_date : DATE NOT NULL
+  number_of_guests : INTEGER NOT NULL
+  contact_name : VARCHAR(100) NOT NULL
+  contact_phone : VARCHAR(20) NOT NULL
+  status : VARCHAR(20) NOT NULL DEFAULT 'PENDING'
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP
+}
+
+table(payments) {
+  pk(id) : BIGSERIAL
+  --
+  fk(booking_id) : BIGINT NOT NULL
+  provider : VARCHAR(50) NOT NULL
+  amount : NUMERIC(12,2) NOT NULL
+  status : VARCHAR(20) NOT NULL DEFAULT 'PENDING'
+  transaction_code : VARCHAR(100)
+  paid_at : TIMESTAMP
+  created_at : TIMESTAMP NOT NULL
+}
+
+users ||--o{ bookings : "creates"
+villas ||--o{ bookings : "is booked in"
+bookings ||--o| payments : "has"
+
+@enduml

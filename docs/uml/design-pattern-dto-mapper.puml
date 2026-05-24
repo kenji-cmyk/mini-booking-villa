@@ -1,0 +1,99 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "Controller Layer" #LightBlue {
+  class VillaController
+  class BookingController
+  class PaymentController
+}
+
+package "DTO (Data Transfer Objects)" #LightGreen {
+  class VillaResponse {
+    - id: Long
+    - name: String
+    - location: String
+    - pricePerNight: BigDecimal
+    - capacity: int
+  }
+
+  class BookingRequest {
+    - villaId: Long
+    - checkInDate: LocalDate
+    - checkOutDate: LocalDate
+    - numberOfGuests: int
+    - contactName: String
+    - contactPhone: String
+  }
+
+  class BookingResponse {
+    - id: Long
+    - villaName: String
+    - checkInDate: LocalDate
+    - checkOutDate: LocalDate
+    - status: String
+  }
+
+  class PaymentRequest {
+    - bookingId: Long
+    - provider: String
+    - amount: BigDecimal
+  }
+
+  class PaymentResponse {
+    - id: Long
+    - status: String
+    - transactionCode: String
+  }
+}
+
+package "Mapper" #LightYellow {
+  class VillaMapper {
+    + toResponse(villa: Villa): VillaResponse
+  }
+
+  class BookingMapper {
+    + toEntity(request: BookingRequest): Booking
+    + toResponse(booking: Booking): BookingResponse
+  }
+
+  class PaymentMapper {
+    + toEntity(request: PaymentRequest): Payment
+    + toResponse(payment: Payment): PaymentResponse
+  }
+}
+
+package "Entity" #LightCoral {
+  class Villa
+  class Booking
+  class Payment
+}
+
+VillaController --> VillaResponse : returns
+BookingController --> BookingRequest : receives
+BookingController --> BookingResponse : returns
+PaymentController --> PaymentRequest : receives
+PaymentController --> PaymentResponse : returns
+
+VillaMapper --> Villa : reads
+VillaMapper --> VillaResponse : creates
+
+BookingMapper --> BookingRequest : reads
+BookingMapper --> Booking : creates / reads
+BookingMapper --> BookingResponse : creates
+
+PaymentMapper --> PaymentRequest : reads
+PaymentMapper --> Payment : creates / reads
+PaymentMapper --> PaymentResponse : creates
+
+note bottom of BookingMapper
+  DTO & Mapper Pattern:
+  DTOs carry only the data needed
+  for each request and response.
+  Mapper classes handle conversion
+  between DTOs and entities,
+  preventing entity exposure to
+  the client.
+end note
+
+@enduml
