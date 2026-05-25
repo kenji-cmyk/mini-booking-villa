@@ -1,0 +1,11 @@
+services:
+  vstay-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vstay-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: demo
+    restart: unless-stopped
