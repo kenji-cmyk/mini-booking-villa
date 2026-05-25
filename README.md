@@ -65,13 +65,16 @@ The repository is organized to separate documentation from the backend codebase.
 ```text
 .
 |-- README.md
+|-- docker-compose.yml
 |-- asset/
 |-- backend/              # Spring Boot backend scaffold
+|   |-- Dockerfile
 |   |-- src/
 |   |-- mvnw
 |   |-- mvnw.cmd
 |   `-- pom.xml
 |-- docs/                 # Software design and requirements documents
+|   |-- API.md            # REST API reference
 |   |-- md/               # Markdown documentation
 |   `-- uml/              # PlantUML diagram source files
 `-- report/               # Final assignment report materials
@@ -83,6 +86,9 @@ The current backend scaffold is configured with:
 
 *   **Backend:** Java 25, Spring Boot 4.0.6
 *   **Build Tool:** Apache Maven / Maven Wrapper
+*   **API Documentation:** OpenAPI JSON / Swagger UI
+*   **Demo Runtime:** H2 in-memory database
+*   **Containerization:** Docker Compose
 
 The backend contains the package/class structure aligned with the package diagram and now includes the Phase 5 implementation prototype. Domain design, workflow diagrams, database schema, design pattern documentation, API endpoints, H2 demo persistence, validation, role-based security, payment strategy handling, and demonstration materials have been completed.
 
@@ -93,8 +99,9 @@ The following instructions are for setting up and running the backend scaffold.
 **Prerequisites:**
 *   Java JDK 25 or a compatible version for the current `pom.xml`
 *   Apache Maven 3.8 or later, or the included Maven Wrapper
+*   Docker Desktop, if running with Docker Compose
 
-**Running the application:**
+**Running the application with Maven:**
 
 1.  Navigate to the `backend` directory:
     ```sh
@@ -115,6 +122,35 @@ On Windows, the Maven Wrapper can also be used:
 cd backend
 .\mvnw.cmd spring-boot:run
 ```
+
+**Running the application with Docker Compose:**
+
+From the repository root:
+
+```powershell
+docker compose up --build
+```
+
+The backend will be available at:
+
+```text
+http://localhost:8080
+```
+
+**API documentation:**
+
+| Resource | URL / Path |
+| --- | --- |
+| API Reference | `docs/API.md` |
+| Swagger UI | `http://localhost:8080/swagger-ui.html` |
+| OpenAPI JSON | `http://localhost:8080/v3/api-docs` |
+
+**Demo accounts:**
+
+| Role | Username | Password |
+| --- | --- | --- |
+| Guest | `guest@vstay.local` | `guest123` |
+| Admin | `admin@vstay.local` | `admin123` |
 
 ## 7. Project Status & Roadmap
 

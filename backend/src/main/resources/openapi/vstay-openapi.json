@@ -1,0 +1,486 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "VStay Villa Booking API",
+    "version": "1.0.0",
+    "description": "Academic Spring Boot API for villa browsing, booking, payment, and admin management."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "paths": {
+    "/api/villas": {
+      "get": {
+        "summary": "List, search, and filter active villas",
+        "security": [],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minPrice",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "capacity",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "availableFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "availableTo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Villa list"
+          }
+        }
+      }
+    },
+    "/api/villas/{id}": {
+      "get": {
+        "summary": "View villa details",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Villa details"
+          },
+          "404": {
+            "description": "Villa not found"
+          }
+        }
+      }
+    },
+    "/api/bookings": {
+      "post": {
+        "summary": "Create a booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Booking created"
+          },
+          "400": {
+            "description": "Invalid booking data"
+          },
+          "409": {
+            "description": "Villa is not available"
+          }
+        }
+      }
+    },
+    "/api/bookings/{id}": {
+      "get": {
+        "summary": "View booking details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking details"
+          }
+        }
+      }
+    },
+    "/api/bookings/{id}/cancel": {
+      "post": {
+        "summary": "Cancel a booking",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking cancelled"
+          }
+        }
+      }
+    },
+    "/api/payments": {
+      "post": {
+        "summary": "Make a simplified payment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment recorded"
+          },
+          "409": {
+            "description": "Payment already exists"
+          }
+        }
+      }
+    },
+    "/api/payments/booking/{bookingId}": {
+      "get": {
+        "summary": "View payment status by booking",
+        "parameters": [
+          {
+            "name": "bookingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment status"
+          },
+          "404": {
+            "description": "Payment not found"
+          }
+        }
+      }
+    },
+    "/api/admin/villas": {
+      "get": {
+        "summary": "Admin list villas including inactive villas",
+        "responses": {
+          "200": {
+            "description": "Villa list"
+          }
+        }
+      },
+      "post": {
+        "summary": "Admin create villa",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VillaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Villa created"
+          }
+        }
+      }
+    },
+    "/api/admin/villas/{id}": {
+      "put": {
+        "summary": "Admin update villa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VillaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Villa updated"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Admin deactivate villa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Villa deactivated"
+          },
+          "409": {
+            "description": "Villa has active bookings"
+          }
+        }
+      }
+    },
+    "/api/admin/bookings": {
+      "get": {
+        "summary": "Admin list all bookings",
+        "responses": {
+          "200": {
+            "description": "Booking list"
+          }
+        }
+      }
+    },
+    "/api/admin/bookings/{id}": {
+      "get": {
+        "summary": "Admin view booking details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Booking details"
+          }
+        }
+      }
+    },
+    "/api/admin/bookings/{id}/status": {
+      "patch": {
+        "summary": "Admin update booking status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingStatusRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Booking status updated"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "BookingRequest": {
+        "type": "object",
+        "required": [
+          "villaId",
+          "checkInDate",
+          "checkOutDate",
+          "contactName",
+          "contactPhone"
+        ],
+        "properties": {
+          "villaId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2
+          },
+          "checkInDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-08-01"
+          },
+          "checkOutDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-08-03"
+          },
+          "numberOfGuests": {
+            "type": "integer",
+            "example": 3
+          },
+          "contactName": {
+            "type": "string",
+            "example": "Demo Guest"
+          },
+          "contactPhone": {
+            "type": "string",
+            "example": "0900000001"
+          }
+        }
+      },
+      "PaymentRequest": {
+        "type": "object",
+        "required": [
+          "bookingId",
+          "provider"
+        ],
+        "properties": {
+          "bookingId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "MOMO",
+              "VNPAY"
+            ]
+          },
+          "transactionCode": {
+            "type": "string",
+            "example": "DEMO-VNPAY-002"
+          },
+          "successful": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "VillaRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "location",
+          "pricePerNight",
+          "capacity"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "City View Villa"
+          },
+          "location": {
+            "type": "string",
+            "example": "Nha Trang"
+          },
+          "description": {
+            "type": "string",
+            "example": "Compact demo villa."
+          },
+          "pricePerNight": {
+            "type": "number",
+            "example": 1600000
+          },
+          "capacity": {
+            "type": "integer",
+            "example": 3
+          }
+        }
+      },
+      "UpdateBookingStatusRequest": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "CONFIRMED",
+              "CANCELLED",
+              "COMPLETED"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

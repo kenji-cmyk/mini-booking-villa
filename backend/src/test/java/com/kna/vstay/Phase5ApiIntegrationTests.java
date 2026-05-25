@@ -49,6 +49,17 @@ class Phase5ApiIntegrationTests {
     }
 
     @Test
+    void swaggerAndOpenApiDocsArePublic() throws Exception {
+        mockMvc.perform(get("/swagger-ui.html"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.openapi").value("3.0.3"))
+                .andExpect(jsonPath("$.info.title").value("VStay Villa Booking API"));
+    }
+
+    @Test
     void securityProtectsGuestAndAdminEndpoints() throws Exception {
         mockMvc.perform(get("/api/admin/villas"))
                 .andExpect(status().isUnauthorized());
