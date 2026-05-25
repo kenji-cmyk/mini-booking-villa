@@ -66,6 +66,8 @@ The repository is organized to separate documentation from the backend codebase.
 .
 |-- README.md
 |-- docker-compose.yml
+|-- .github/
+|   `-- workflows/       # GitHub Actions CI/CD workflows
 |-- asset/
 |-- backend/              # Spring Boot backend scaffold
 |   |-- Dockerfile
@@ -152,7 +154,22 @@ http://localhost:8080
 | Guest | `guest@vstay.local` | `guest123` |
 | Admin | `admin@vstay.local` | `admin123` |
 
-## 7. Project Status & Roadmap
+## 7. CI/CD
+
+GitHub Actions workflows are defined in `.github/workflows/`.
+
+| Workflow | Trigger | Purpose |
+| --- | --- | --- |
+| `CI` | Pull requests, pushes to `main`, `master`, or `develop`, manual dispatch | Runs backend tests, packages the Spring Boot jar, validates Docker Compose, and builds the Docker image. |
+| `CD` | Pushes to `main`, version tags like `v1.0.0`, manual dispatch | Builds and publishes the backend Docker image to GitHub Container Registry. |
+
+The published image name is:
+
+```text
+ghcr.io/<owner>/<repository>/vstay-backend
+```
+
+## 8. Project Status & Roadmap
 
 This project is currently in the **final report preparation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, design pattern documentation, and Phase 5 backend implementation/demo materials have been completed.
 
