@@ -84,7 +84,7 @@ The current backend scaffold is configured with:
 *   **Backend:** Java 25, Spring Boot 4.0.6
 *   **Build Tool:** Apache Maven / Maven Wrapper
 
-The backend currently contains the package/class skeleton aligned with the package diagram. Domain design, workflow diagrams, database schema, and design pattern documentation have been completed. API endpoints, persistence behavior, and full business logic are still planned implementation work.
+The backend contains the package/class structure aligned with the package diagram and now includes the Phase 5 implementation prototype. Domain design, workflow diagrams, database schema, design pattern documentation, API endpoints, H2 demo persistence, validation, role-based security, payment strategy handling, and demonstration materials have been completed.
 
 ## 6. Setup and Usage
 
@@ -118,7 +118,7 @@ cd backend
 
 ## 7. Project Status & Roadmap
 
-This project is currently in the **design pattern documentation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, and design pattern documentation have been completed.
+This project is currently in the **final report preparation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, design pattern documentation, and Phase 5 backend implementation/demo materials have been completed.
 
 *   [x] **Phase 1: Requirements & Analysis**
     *   [x] Define project scope and objectives.
@@ -136,8 +136,8 @@ This project is currently in the **design pattern documentation phase**. Require
     *   [x] Explain design patterns used in the codebase.
     *   [x] Document why each pattern is used.
     *   [x] Connect each pattern to the related package, class, and workflow.
-*   [ ] **Phase 5: Implementation & Demonstration**
-    *   [ ] Implement core backend features for Guest and Admin.
-    *   [ ] Prepare demonstration materials.
+*   [x] **Phase 5: Implementation & Demonstration**
+    *   [x] Implement core backend features for Guest and Admin.
+    *   [x] Prepare demonstration materials.
 *   [ ] **Phase 6: Final Report**
     *   [ ] Compile all documentation into the final assignment report.

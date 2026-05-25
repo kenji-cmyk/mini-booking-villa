@@ -1,4 +1,9 @@
 package com.kna.vstay.repository;
 
-public interface PaymentRepository {
+import com.kna.vstay.entity.Payment;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
+    Optional<Payment> findByBookingId(Long bookingId);
 }
