@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.MvcResult;
 class Phase5ApiIntegrationTests {
     private static final String GUEST = "guest@vstay.local";
     private static final String GUEST_PASSWORD = "guest123";
+    private static final String OTHER_GUEST = "otherguest@vstay.local";
+    private static final String OTHER_GUEST_PASSWORD = "guest456";
     private static final String ADMIN = "admin@vstay.local";
     private static final String ADMIN_PASSWORD = "admin123";
 
@@ -151,6 +153,86 @@ class Phase5ApiIntegrationTests {
     }
 
     @Test
+    void guestCannotAccessCancelOrPayAnotherGuestsBooking() throws Exception {
+        MvcResult created = mockMvc.perform(post("/api/bookings")
+                        .with(httpBasic(GUEST, GUEST_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "villaId": 3,
+                                  "checkInDate": "2026-08-15",
+                                  "checkOutDate": "2026-08-17",
+                                  "numberOfGuests": 2,
+                                  "contactName": "Demo Guest",
+                                  "contactPhone": "0900000001"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String bookingId = com.jayway.jsonpath.JsonPath.read(created.getResponse().getContentAsString(), "$.data.id")
+                .toString();
+
+        mockMvc.perform(get("/api/bookings/{id}", bookingId).with(httpBasic(OTHER_GUEST, OTHER_GUEST_PASSWORD)))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false));
+
+        mockMvc.perform(post("/api/bookings/{id}/cancel", bookingId)
+                        .with(httpBasic(OTHER_GUEST, OTHER_GUEST_PASSWORD)))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/api/payments")
+                        .with(httpBasic(OTHER_GUEST, OTHER_GUEST_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "bookingId": %s,
+                                  "provider": "MOMO",
+                                  "transactionCode": "OTHER-GUEST-001",
+                                  "successful": true
+                                }
+                                """.formatted(bookingId)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void omittedPaymentResultRecordsPendingPaymentWithoutConfirmingBooking() throws Exception {
+        MvcResult created = mockMvc.perform(post("/api/bookings")
+                        .with(httpBasic(GUEST, GUEST_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "villaId": 2,
+                                  "checkInDate": "2026-08-20",
+                                  "checkOutDate": "2026-08-22",
+                                  "numberOfGuests": 2,
+                                  "contactName": "Demo Guest",
+                                  "contactPhone": "0900000001"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String bookingId = com.jayway.jsonpath.JsonPath.read(created.getResponse().getContentAsString(), "$.data.id")
+                .toString();
+
+        mockMvc.perform(post("/api/payments")
+                        .with(httpBasic(GUEST, GUEST_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "bookingId": %s,
+                                  "provider": "VNPAY",
+                                  "transactionCode": "PENDING-VNPAY-001"
+                                }
+                                """.formatted(bookingId)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.status").value("PENDING"));
+
+        mockMvc.perform(get("/api/bookings/{id}", bookingId).with(httpBasic(GUEST, GUEST_PASSWORD)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("PENDING"));
+    }
+
+    @Test
     void adminCanManageVillaWithoutActiveBookings() throws Exception {
         MvcResult created = mockMvc.perform(post("/api/admin/villas")
                         .with(httpBasic(ADMIN, ADMIN_PASSWORD))
@@ -204,5 +286,57 @@ class Phase5ApiIntegrationTests {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("COMPLETED"));
+    }
+
+    @Test
+    void adminBookingStatusTransitionsRejectInconsistentChanges() throws Exception {
+        MvcResult created = mockMvc.perform(post("/api/bookings")
+                        .with(httpBasic(GUEST, GUEST_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "villaId": 2,
+                                  "checkInDate": "2026-09-01",
+                                  "checkOutDate": "2026-09-03",
+                                  "numberOfGuests": 2,
+                                  "contactName": "Demo Guest",
+                                  "contactPhone": "0900000001"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String bookingId = com.jayway.jsonpath.JsonPath.read(created.getResponse().getContentAsString(), "$.data.id")
+                .toString();
+
+        mockMvc.perform(patch("/api/admin/bookings/{id}/status", bookingId)
+                        .with(httpBasic(ADMIN, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "status": "COMPLETED"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(patch("/api/admin/bookings/{id}/status", bookingId)
+                        .with(httpBasic(ADMIN, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "status": "CANCELLED"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("CANCELLED"));
+
+        mockMvc.perform(patch("/api/admin/bookings/{id}/status", bookingId)
+                        .with(httpBasic(ADMIN, ADMIN_PASSWORD))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "status": "CONFIRMED"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
     }
 }

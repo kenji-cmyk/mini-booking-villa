@@ -2,13 +2,13 @@
 
 ## 1. Repository Overview
 
-This repository contains the software design documentation and backend scaffold for VStay, a simple villa booking system. The project was created for a university-level Software Design (SWD) assignment to demonstrate core software engineering principles, including requirements analysis, system design, and implementation planning.
+This repository contains the software design documentation and backend implementation prototype for VStay, a simple villa booking system. The project was created for a university-level Software Design (SWD) assignment to demonstrate core software engineering principles, including requirements analysis, system design, implementation, and verification.
 
 The primary purpose of this repository is to:
 
 1.  **Store software engineering documents:** Centralize the main analysis and design artifacts, including requirements specifications and UML diagrams.
 2.  **Demonstrate the software design process:** Document the journey from project scope and requirements to system structure.
-3.  **Prepare an implementation prototype:** Provide a Spring Boot backend structure that can be extended into the system's core features.
+3.  **Provide an implementation prototype:** Provide a Spring Boot backend that implements the documented guest and admin workflows.
 
 This project is an academic exercise and is **not** intended to be a production-ready commercial system.
 
@@ -96,6 +96,8 @@ The current backend scaffold is configured with:
 
 The backend contains the package/class structure aligned with the package diagram and now includes the Phase 5 implementation prototype. Domain design, workflow diagrams, database schema, design pattern documentation, API endpoints, H2 demo persistence, validation, role-based security, payment strategy handling, and demonstration materials have been completed.
 
+The implementation also enforces guest booking ownership, supports pending/successful/failed payment outcomes, and validates admin booking status transitions according to the technical overview.
+
 ## 6. Setup and Usage
 
 The following instructions are for setting up and running the backend scaffold.
@@ -155,7 +157,10 @@ http://localhost:8080
 | Role | Username | Password |
 | --- | --- | --- |
 | Guest | `guest@vstay.local` | `guest123` |
+| Guest | `otherguest@vstay.local` | `guest456` |
 | Admin | `admin@vstay.local` | `admin123` |
+
+Guest booking and payment endpoints are ownership-scoped. Use the admin endpoints for cross-user booking review and status updates.
 
 ## 7. CI/CD
 
@@ -174,7 +179,7 @@ ghcr.io/<owner>/<repository>/vstay-backend
 
 ## 8. Project Status & Roadmap
 
-This project is currently in the **final report preparation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, design pattern documentation, Phase 5 backend implementation/demo materials, API reference, and implementation-alignment review have been completed.
+This project is currently in the **final report preparation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, design pattern documentation, Phase 5 backend implementation/demo materials, API reference, implementation-alignment review, and stricter business-rule verification have been completed.
 
 *   [x] **Phase 1: Requirements & Analysis**
     *   [x] Define project scope and objectives.
@@ -196,5 +201,6 @@ This project is currently in the **final report preparation phase**. Requirement
     *   [x] Implement core backend features for Guest and Admin.
     *   [x] Prepare demonstration materials.
     *   [x] Review backend implementation against delivered use case, class, sequence, and package documentation.
+    *   [x] Enforce guest booking ownership, payment pending behavior, and admin status transition rules.
 *   [ ] **Phase 6: Final Report**
     *   [ ] Compile all documentation into the final assignment report.

@@ -10,9 +10,13 @@ This review checks whether the current backend implementation matches the delive
 
 ## Overall Result
 
-The backend implementation is mostly aligned with the delivered documents. The system implements the documented guest and admin use cases, follows the package diagram structure, maps the main class diagram entities, follows the documented sequence flows at a business level, and applies the documented layered, repository, DTO/mapper, strategy, and factory patterns.
+The backend implementation is aligned with the delivered assignment documentation. It implements the documented guest and admin use cases, follows the package diagram structure, maps the main class diagram entities, follows the documented sequence flows at a business level, and applies the documented layered, repository, DTO/mapper, strategy, and factory patterns.
 
-The main implementation gaps are authorization depth for guest-owned booking/payment actions, limited payment status behavior, and light validation for admin booking-status transitions.
+The previous review gaps have been fixed:
+
+- Guest booking and payment actions are now ownership-scoped.
+- Payment submission can now record `PENDING`, `SUCCESSFUL`, or `FAILED`.
+- Admin booking status updates now enforce explicit transition rules.
 
 ## Use Case Coverage
 
@@ -22,16 +26,29 @@ The main implementation gaps are authorization depth for guest-owned booking/pay
 | UC-02 Search and Filter Villas | Search by keyword and filter by price, capacity, and availability date. | Implemented through query parameters in `VillaController` and `VillaService`. |
 | UC-03 View Villa Details | Guest can view one active villa. | Implemented through `GET /api/villas/{id}`. |
 | UC-04 Create Booking | Validate dates, guest count, contact data, and villa availability before saving pending booking. | Implemented in `BookingService.create`. |
-| UC-05 View Booking Details | Guest can view booking details. | Implemented through `GET /api/bookings/{id}`. Ownership restriction is not enforced. |
-| UC-06 Cancel Booking | Guest can cancel eligible pending or confirmed bookings. | Implemented through `POST /api/bookings/{id}/cancel`. Ownership restriction is not enforced. |
-| UC-07 Make Payment | Guest can submit simplified payment; successful payment confirms booking. | Implemented through `POST /api/payments` with MOMO/VNPAY strategy selection. |
-| UC-08 View Payment Status | Guest can view payment status by booking. | Implemented through `GET /api/payments/booking/{bookingId}`. Ownership restriction is not enforced. |
+| UC-05 View Booking Details | Guest can view details for their booking. | Implemented through `GET /api/bookings/{id}` with ownership validation. |
+| UC-06 Cancel Booking | Guest can cancel their eligible pending or confirmed booking. | Implemented through `POST /api/bookings/{id}/cancel` with ownership and status validation. |
+| UC-07 Make Payment | Guest can submit simplified payment for their booking; successful payment confirms booking. | Implemented through `POST /api/payments` with ownership validation and MOMO/VNPAY strategy selection. |
+| UC-08 View Payment Status | Guest can view payment status for their booking. | Implemented through `GET /api/payments/booking/{bookingId}` with ownership validation. |
 | UC-09 Create Villa | Admin can create villa. | Implemented through `POST /api/admin/villas`. |
 | UC-10 Update Villa | Admin can update villa. | Implemented through `PUT /api/admin/villas/{id}`. |
 | UC-11 Delete Villa | Admin can delete villa if it has no active booking. | Implemented as soft delete through `active=false`; rejected when active bookings exist. |
 | UC-12 View Villa List | Admin can view villa list. | Implemented through `GET /api/admin/villas`, including inactive villas. |
 | UC-13 View All Bookings | Admin can view all bookings and details. | Implemented through `GET /api/admin/bookings` and `GET /api/admin/bookings/{id}`. |
-| UC-14 Update Booking Status | Admin can update booking status. | Implemented through `PATCH /api/admin/bookings/{id}/status`; only enum/null validation is applied. |
+| UC-14 Update Booking Status | Admin can update booking status while keeping state consistent. | Implemented through `PATCH /api/admin/bookings/{id}/status` with transition validation. |
+
+## Business Rule Alignment
+
+| Rule Area | Implementation |
+| --- | --- |
+| Booking dates | `checkOutDate` must be after `checkInDate`; request dates must be present/future through validation annotations. |
+| Villa capacity | `numberOfGuests` must not exceed `villa.capacity`. |
+| Villa availability | Active overlapping `PENDING` or `CONFIRMED` bookings block new bookings. |
+| Booking ownership | Guest endpoints require the authenticated user to own the booking; admins use `/api/admin/**` for cross-user management. |
+| Cancellation | Only `PENDING` and `CONFIRMED` bookings can be cancelled by the owner. |
+| Payment status | `successful=true` records `SUCCESSFUL`, `successful=false` records `FAILED`, and omitted `successful` records `PENDING`. |
+| Payment consistency | Only one payment can exist per booking, and only `PENDING` bookings can be paid. |
+| Admin status transitions | `PENDING -> CONFIRMED/CANCELLED`, `CONFIRMED -> COMPLETED/CANCELLED`; `CANCELLED` and `COMPLETED` are terminal except for no-op updates. |
 
 ## Class Diagram Alignment
 
@@ -60,7 +77,7 @@ The backend follows the documented package layout:
 - `exception`: custom exceptions and global exception handler.
 - `config`: security and demo-data configuration.
 
-The only notable addition outside the package diagram is `SwaggerController`, which supports the API documentation surface and does not conflict with the architecture.
+The only notable addition outside the original package diagram is `SwaggerController`, which supports the API documentation surface and does not conflict with the architecture.
 
 ## Sequence Diagram Alignment
 
@@ -68,12 +85,12 @@ The business sequence flows are implemented as documented:
 
 - Browse villas: controller asks service, service queries repository, response returns villa DTOs.
 - Create booking: input validation, availability check, pending booking persistence, conflict response on overlap.
-- Cancel booking: booking load, eligibility check through active status, status update to `CANCELLED`.
-- Payment: booking load, strategy/factory payment processing, payment persistence, booking confirmation on successful payment.
+- Cancel booking: booking load, ownership check, cancellation eligibility check, status update to `CANCELLED`.
+- Payment: booking load, ownership check, payable-state validation, strategy/factory payment processing, payment persistence, booking confirmation on successful payment.
 - Admin villa management: validation, create/update persistence, active-booking check before soft delete.
-- Admin booking management: list/detail retrieval and status update.
+- Admin booking management: list/detail retrieval, transition validation, and status update.
 
-The sequence diagrams describe a high-level "VStay System" participant, so the implemented controller/service/repository split is a valid technical realization of those flows.
+The sequence diagrams describe a high-level "VStay System" participant, so the implemented controller/service/repository split remains a valid technical realization of those flows.
 
 ## Design Pattern Alignment
 
@@ -87,22 +104,23 @@ The sequence diagrams describe a high-level "VStay System" participant, so the i
 
 The design-pattern UML uses method names such as `pay` and `getProviderName`, while the code uses `process` and `provider`. This is a naming-level difference only; the pattern intent is implemented.
 
-## Important Gaps and Risks
+## Remaining Notes
 
- while the demo implementation runs on H2 with Hibernate `create-drop`. This is acceptable for the documented classroom demo, but should be called out if PostgreSQL execution is required.
-5. The test document is named `09-testing-strategy.md`, but its current content is closer to Phase 5 implementation and demo instructions than a full testing strategy.
+- The documentation database target is PostgreSQL, while the demo implementation runs on H2 with Hibernate `create-drop`. This remains acceptable for the classroom demo profile, but PostgreSQL configuration would be needed for a PostgreSQL runtime demonstration.
+- The test document is named `09-testing-strategy.md`, but its current content is closer to Phase 5 implementation and demo instructions than a full testing strategy.
 
 ## Verification
 
-The backend has integration tests covering:
+The backend integration tests cover:
 
 - Public villa browsing, search, and filters.
 - Public Swagger/OpenAPI access.
 - Admin endpoint security.
-- Booking creation, conflict rejection, and cancellation.
-- Successful payment and booking confirmation.
+- Booking creation, conflict rejection, cancellation, and guest ownership enforcement.
+- Successful, failed, and pending-capable payment behavior.
+- Payment ownership enforcement and one-payment-per-booking behavior.
 - Admin villa create/update/delete behavior.
-- Admin booking status update and active-booking delete rejection.
+- Admin booking status transition validation and active-booking delete rejection.
 
 Run from `backend/`:
 
@@ -110,6 +128,13 @@ Run from `backend/`:
 .\mvnw.cmd test
 ```
 
+Latest verification result:
+
+```text
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
+
 ## Conclusion
 
-The current codebase is a valid implementation of the delivered use case, package, class, sequence, database, and design-pattern documentation for the assignment scope. It is suitable for Phase 5 demonstration and final-report preparation, with the caveat that guest ownership checks and stricter status-transition validation should be treated as the highest-priority improvements if the system is evaluated beyond the demo scenario.
+The current codebase is a valid implementation of the delivered use case, package, class, sequence, database, and design-pattern documentation for the assignment scope. The stricter guest ownership, payment pending state, and booking status transition rules make the implementation closer to the documented business wording without changing the documented architecture.

@@ -5,6 +5,7 @@ import com.kna.vstay.dto.PaymentRequest;
 import com.kna.vstay.dto.PaymentResponse;
 import com.kna.vstay.service.PaymentService;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,12 +26,12 @@ public class PaymentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<PaymentResponse> makePayment(@Valid @RequestBody PaymentRequest request) {
-        return ApiResponse.ok(paymentService.makePayment(request));
+    public ApiResponse<PaymentResponse> makePayment(@Valid @RequestBody PaymentRequest request, Principal principal) {
+        return ApiResponse.ok(paymentService.makePayment(request, principal.getName()));
     }
 
     @GetMapping("/booking/{bookingId}")
-    public ApiResponse<PaymentResponse> getByBooking(@PathVariable Long bookingId) {
-        return ApiResponse.ok(paymentService.getByBookingId(bookingId));
+    public ApiResponse<PaymentResponse> getByBooking(@PathVariable Long bookingId, Principal principal) {
+        return ApiResponse.ok(paymentService.getByBookingId(bookingId, principal.getName()));
     }
 }

@@ -13,6 +13,9 @@ public class VNPayPaymentStrategy implements PaymentStrategy {
 
     @Override
     public PaymentStatus process(PaymentRequest request) {
-        return Boolean.FALSE.equals(request.successful()) ? PaymentStatus.FAILED : PaymentStatus.SUCCESSFUL;
+        if (request.successful() == null) {
+            return PaymentStatus.PENDING;
+        }
+        return Boolean.TRUE.equals(request.successful()) ? PaymentStatus.SUCCESSFUL : PaymentStatus.FAILED;
     }
 }

@@ -31,6 +31,7 @@ public class SecurityConfig {
     UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(
                 User.withUsername("guest@vstay.local").password("{noop}guest123").roles("GUEST").build(),
+                User.withUsername("otherguest@vstay.local").password("{noop}guest456").roles("GUEST").build(),
                 User.withUsername("admin@vstay.local").password("{noop}admin123").roles("ADMIN").build());
     }
 }

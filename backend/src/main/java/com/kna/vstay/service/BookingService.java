@@ -6,6 +6,8 @@ import com.kna.vstay.entity.Booking;
 import com.kna.vstay.entity.User;
 import com.kna.vstay.entity.Villa;
 import com.kna.vstay.enums.BookingStatus;
+import com.kna.vstay.enums.Role;
+import com.kna.vstay.exception.AccessDeniedException;
 import com.kna.vstay.exception.BookingConflictException;
 import com.kna.vstay.exception.NotFoundException;
 import com.kna.vstay.exception.ValidationException;
@@ -52,13 +54,19 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
+    public BookingResponse getByIdForUser(Long id, String userEmail) {
+        Booking booking = findBookingForUser(id, userEmail);
+        return bookingMapper.toResponse(booking);
+    }
+
+    @Transactional(readOnly = true)
     public List<BookingResponse> getAll() {
         return bookingRepository.findAll().stream().map(bookingMapper::toResponse).toList();
     }
 
     @Transactional
-    public BookingResponse cancel(Long id) {
-        Booking booking = findBooking(id);
+    public BookingResponse cancel(Long id, String userEmail) {
+        Booking booking = findBookingForUser(id, userEmail);
         if (!booking.isActive()) {
             throw new ValidationException("Only pending or confirmed bookings can be cancelled.");
         }
@@ -72,6 +80,7 @@ public class BookingService {
             throw new ValidationException("Booking status is required.");
         }
         Booking booking = findBooking(id);
+        validateStatusTransition(booking.getStatus(), status);
         booking.updateStatus(status);
         return bookingMapper.toResponse(bookingRepository.save(booking));
     }
@@ -79,6 +88,17 @@ public class BookingService {
     @Transactional(readOnly = true)
     public Booking findBooking(Long id) {
         return bookingRepository.findById(id).orElseThrow(() -> new NotFoundException("Booking not found."));
+    }
+
+    @Transactional(readOnly = true)
+    public Booking findBookingForUser(Long id, String userEmail) {
+        Booking booking = findBooking(id);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("Authenticated user was not found."));
+        if (user.getRole() == Role.ADMIN || booking.getUser().getId().equals(user.getId())) {
+            return booking;
+        }
+        throw new AccessDeniedException("You can only access your own booking.");
     }
 
     private void validateBookingRequest(BookingRequest request, Villa villa) {
@@ -97,6 +117,21 @@ public class BookingService {
                 .isEmpty();
         if (hasConflict) {
             throw new BookingConflictException("Villa is not available for the selected dates.");
+        }
+    }
+
+    private void validateStatusTransition(BookingStatus currentStatus, BookingStatus nextStatus) {
+        if (currentStatus == nextStatus) {
+            return;
+        }
+        boolean valid = switch (currentStatus) {
+            case PENDING -> nextStatus == BookingStatus.CONFIRMED || nextStatus == BookingStatus.CANCELLED;
+            case CONFIRMED -> nextStatus == BookingStatus.COMPLETED || nextStatus == BookingStatus.CANCELLED;
+            case CANCELLED, COMPLETED -> false;
+        };
+        if (!valid) {
+            throw new ValidationException(
+                    "Invalid booking status transition from " + currentStatus + " to " + nextStatus + ".");
         }
     }
 }

@@ -31,12 +31,12 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<BookingResponse> getById(@PathVariable Long id) {
-        return ApiResponse.ok(bookingService.getById(id));
+    public ApiResponse<BookingResponse> getById(@PathVariable Long id, Principal principal) {
+        return ApiResponse.ok(bookingService.getByIdForUser(id, principal.getName()));
     }
 
     @PostMapping("/{id}/cancel")
-    public ApiResponse<BookingResponse> cancel(@PathVariable Long id) {
-        return ApiResponse.ok(bookingService.cancel(id));
+    public ApiResponse<BookingResponse> cancel(@PathVariable Long id, Principal principal) {
+        return ApiResponse.ok(bookingService.cancel(id, principal.getName()));
     }
 }

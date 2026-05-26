@@ -43,4 +43,10 @@ public class GlobalExceptionHandler {
     ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException exception) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("Access denied."));
     }
+
+    @ExceptionHandler(com.kna.vstay.exception.AccessDeniedException.class)
+    ResponseEntity<ApiResponse<Void>> handleApplicationAccessDenied(
+            com.kna.vstay.exception.AccessDeniedException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error(exception.getMessage()));
+    }
 }

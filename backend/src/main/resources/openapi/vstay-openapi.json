@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "VStay Villa Booking API",
-    "version": "1.0.0",
-    "description": "Academic Spring Boot API for villa browsing, booking, payment, and admin management."
+    "version": "1.1.0",
+    "description": "Academic Spring Boot API for villa browsing, guest-owned booking/payment workflows, and admin management."
   },
   "servers": [
     {
@@ -141,6 +141,9 @@
         "responses": {
           "200": {
             "description": "Booking details"
+          },
+          "403": {
+            "description": "Booking does not belong to the authenticated guest"
           }
         }
       }
@@ -162,6 +165,12 @@
         "responses": {
           "200": {
             "description": "Booking cancelled"
+          },
+          "400": {
+            "description": "Booking cannot be cancelled from its current status"
+          },
+          "403": {
+            "description": "Booking does not belong to the authenticated guest"
           }
         }
       }
@@ -182,6 +191,12 @@
         "responses": {
           "201": {
             "description": "Payment recorded"
+          },
+          "400": {
+            "description": "Invalid provider or booking is not payable"
+          },
+          "403": {
+            "description": "Booking does not belong to the authenticated guest"
           },
           "409": {
             "description": "Payment already exists"
@@ -206,6 +221,9 @@
         "responses": {
           "200": {
             "description": "Payment status"
+          },
+          "403": {
+            "description": "Booking does not belong to the authenticated guest"
           },
           "404": {
             "description": "Payment not found"
@@ -352,6 +370,9 @@
         "responses": {
           "200": {
             "description": "Booking status updated"
+          },
+          "400": {
+            "description": "Invalid booking status transition"
           }
         }
       }
@@ -429,6 +450,8 @@
           },
           "successful": {
             "type": "boolean",
+            "nullable": true,
+            "description": "true records SUCCESSFUL payment, false records FAILED payment, omitted records PENDING payment.",
             "example": true
           }
         }

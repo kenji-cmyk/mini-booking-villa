@@ -27,6 +27,7 @@ public class DemoDataInitializer {
 
             User guest = userRepository
                     .save(new User("Demo Guest", "guest@vstay.local", "0900000001", Role.GUEST));
+            userRepository.save(new User("Other Demo Guest", "otherguest@vstay.local", "0900000003", Role.GUEST));
             userRepository.save(new User("Demo Admin", "admin@vstay.local", "0900000002", Role.ADMIN));
 
             Villa beachVilla = villaRepository.save(new Villa("Ocean Breeze Villa", "Da Nang Beach",

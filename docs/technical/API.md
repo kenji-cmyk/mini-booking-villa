@@ -42,7 +42,10 @@ Demo users:
 | Role | Username | Password |
 | --- | --- | --- |
 | Guest | `guest@vstay.local` | `guest123` |
+| Guest | `otherguest@vstay.local` | `guest456` |
 | Admin | `admin@vstay.local` | `admin123` |
+
+Guest booking and payment endpoints are ownership-scoped. A guest can only view, cancel, pay for, or view payment status for bookings created by that same guest account. Admins use the `/api/admin/**` endpoints for cross-user booking management.
 
 PowerShell note: for JSON requests with `curl.exe`, pipe the JSON with `--data-binary '@-'` to preserve quotes.
 
@@ -136,6 +139,8 @@ Example:
 curl.exe -u guest@vstay.local:guest123 http://localhost:8080/api/bookings/1
 ```
 
+The booking must belong to the authenticated guest, otherwise the API returns `403 Forbidden`.
+
 ### Cancel Booking
 
 ```http
@@ -149,6 +154,7 @@ curl.exe -u guest@vstay.local:guest123 -X POST http://localhost:8080/api/booking
 ```
 
 Only `PENDING` and `CONFIRMED` bookings can be cancelled.
+The booking must belong to the authenticated guest, otherwise the API returns `403 Forbidden`.
 
 ## Guest Payment Endpoints
 
@@ -192,6 +198,9 @@ Behavior:
 
 - Successful payment creates a `SUCCESSFUL` payment and confirms the booking.
 - Failed payment creates a `FAILED` payment and leaves the booking unconfirmed.
+- Omitting `successful` creates a `PENDING` payment and leaves the booking pending.
+- Only `PENDING` bookings can be paid.
+- The booking must belong to the authenticated guest.
 - Only one payment can be recorded per booking.
 
 ### View Payment Status
@@ -205,6 +214,8 @@ Example:
 ```powershell
 curl.exe -u guest@vstay.local:guest123 http://localhost:8080/api/payments/booking/2
 ```
+
+The booking must belong to the authenticated guest, otherwise the API returns `403 Forbidden`.
 
 ## Admin Villa Endpoints
 
@@ -293,6 +304,15 @@ Supported statuses:
 - `CONFIRMED`
 - `CANCELLED`
 - `COMPLETED`
+
+Valid status transitions:
+
+| Current Status | Allowed Next Status |
+| --- | --- |
+| `PENDING` | `CONFIRMED`, `CANCELLED` |
+| `CONFIRMED` | `COMPLETED`, `CANCELLED` |
+| `CANCELLED` | No further changes, except no-op `CANCELLED` |
+| `COMPLETED` | No further changes, except no-op `COMPLETED` |
 
 ## Error Responses
 
