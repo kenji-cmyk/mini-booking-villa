@@ -36,7 +36,7 @@ VStay is a web-based platform that allows guests to find and book villas, while 
 
 ## 3. Software Design Artifacts
 
-This repository currently includes documentation artifacts for requirements analysis, initial system design, detailed UML design, database schema, and design pattern documentation:
+This repository currently includes documentation artifacts for requirements analysis, initial system design, detailed UML design, database schema, design pattern documentation, API reference, and technical implementation review:
 
 *   **Introduction:** Describes the project background, problem statement, objectives, target users, scope, out-of-scope items, and expected outcome.
 *   **Requirements Specification:** Defines functional requirements, non-functional requirements, use cases, business rules, assumptions, and constraints.
@@ -46,6 +46,8 @@ This repository currently includes documentation artifacts for requirements anal
 *   **Sequence Diagrams:** Describe the main guest and admin workflows using separated, focused diagrams.
 *   **Database Schema:** Defines the PostgreSQL database tables, columns, data types, constraints, and relationships.
 *   **Design Patterns:** Documents the five design patterns used in the codebase with rationale, code mapping, and UML diagrams.
+*   **Technical Overview:** Reviews whether the backend implementation matches the delivered use cases, class diagram, sequence diagrams, package diagram, database schema, and design patterns.
+*   **API Reference:** Documents the REST endpoints, authentication, request examples, and response envelope.
 
 The current sequence diagrams are separated into:
 
@@ -56,7 +58,7 @@ The current sequence diagrams are separated into:
 *   Admin manage villas.
 *   Admin manage bookings.
 
-The Markdown documentation is located in `docs/md/`, and the PlantUML diagram sources are located in `docs/uml/`.
+The Markdown documentation is located in `docs/md/`, the technical implementation documents are located in `docs/technical/`, and the PlantUML diagram sources are located in `docs/uml/`.
 
 ## 4. Repository Structure
 
@@ -76,8 +78,8 @@ The repository is organized to separate documentation from the backend codebase.
 |   |-- mvnw.cmd
 |   `-- pom.xml
 |-- docs/                 # Software design and requirements documents
-|   |-- API.md            # REST API reference
 |   |-- md/               # Markdown documentation
+|   |-- technical/        # Implementation overview and REST API reference
 |   `-- uml/              # PlantUML diagram source files
 `-- report/               # Final assignment report materials
 ```
@@ -143,7 +145,8 @@ http://localhost:8080
 
 | Resource | URL / Path |
 | --- | --- |
-| API Reference | `docs/API.md` |
+| Technical Implementation Overview | `docs/technical/IMPLEMENTATION-OVERVIEW.md` |
+| API Reference | `docs/technical/API.md` |
 | Swagger UI | `http://localhost:8080/swagger-ui.html` |
 | OpenAPI JSON | `http://localhost:8080/v3/api-docs` |
 
@@ -171,7 +174,7 @@ ghcr.io/<owner>/<repository>/vstay-backend
 
 ## 8. Project Status & Roadmap
 
-This project is currently in the **final report preparation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, design pattern documentation, and Phase 5 backend implementation/demo materials have been completed.
+This project is currently in the **final report preparation phase**. Requirements, use case modeling, package-level backend design, class design, sequence workflow design, database schema, design pattern documentation, Phase 5 backend implementation/demo materials, API reference, and implementation-alignment review have been completed.
 
 *   [x] **Phase 1: Requirements & Analysis**
     *   [x] Define project scope and objectives.
@@ -192,5 +195,6 @@ This project is currently in the **final report preparation phase**. Requirement
 *   [x] **Phase 5: Implementation & Demonstration**
     *   [x] Implement core backend features for Guest and Admin.
     *   [x] Prepare demonstration materials.
+    *   [x] Review backend implementation against delivered use case, class, sequence, and package documentation.
 *   [ ] **Phase 6: Final Report**
     *   [ ] Compile all documentation into the final assignment report.
