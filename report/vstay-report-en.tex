@@ -39,7 +39,27 @@
   keepspaces=true,
   showstringspaces=false,
   breakatwhitespace=false,
+  breakindent=0pt,
+  breakautoindent=false,
+  xleftmargin=0pt,
+  framexleftmargin=0pt,
   tabsize=2
+}
+
+\lstdefinestyle{prompt}{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  breakatwhitespace=false,
+  breakindent=0pt,
+  breakautoindent=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  frame=single,
+  xleftmargin=0pt,
+  framexleftmargin=0pt,
+  aboveskip=0.6em,
+  belowskip=0.6em
 }
 
 \newcommand{\umlimageplaceholder}[1]{
@@ -177,12 +197,11 @@ FR-17--FR-20 & Admins can view all bookings, view booking details, and update bo
 
 \subsection{AI Prompt Used}
 
-\begin{lstlisting}
+\begin{lstlisting}[style=prompt]
 Create a UML use case diagram for a villa booking management system.
 
 Requirements:
-- Guests can view villas, search villas, view villa details,
-create bookings, cancel bookings, make payments, and view payment status.
+- Guests can view villas, search villas, view villa details, create bookings, cancel bookings, make payments, and view payment status.
 - Admins can create, update, delete, and manage villas and bookings.
 
 Generate a PlantUML use case diagram using Guest and Admin actors.
@@ -205,7 +224,7 @@ The use case diagram shows two main actors: Guest and Admin. Guests handle villa
 
 \subsection{AI Prompt Used}
 
-\begin{lstlisting}
+\begin{lstlisting}[style=prompt]
 Create a UML package diagram for a Spring Boot villa booking management system.
 
 The system includes villa browsing, booking management, payment processing using MomoPay and VNPay, and admin management.
@@ -229,7 +248,7 @@ The package diagram describes the Spring Boot backend using a layered structure.
 
 \subsection{AI Prompt Used}
 
-\begin{lstlisting}
+\begin{lstlisting}[style=prompt]
 Create a simple UML class diagram for a villa booking management system.
 
 The system includes guests and admins, villas, bookings, payments, booking status, and payment status.
@@ -255,7 +274,7 @@ The sequence diagrams are separated by workflow to keep each behavior readable a
 
 \subsection{AI Prompt Used}
 
-\begin{lstlisting}
+\begin{lstlisting}[style=prompt]
 Create simple UML sequence diagrams for a villa booking management system.
 
 Actors:
