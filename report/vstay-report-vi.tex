@@ -1,0 +1,356 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+\lstdefinelanguage{PlantUML}{
+  morekeywords={@startuml,@enduml,actor,participant,database,rectangle,usecase,class,interface,enum,package,alt,else,end,skinparam,left,right,direction},
+  sensitive=true,
+  morecomment=[l]{'},
+  morestring=[b]"
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=2
+}
+
+\newcommand{\umlimageplaceholder}[1]{
+  \begin{center}
+    \fbox{
+      \begin{minipage}{0.9\linewidth}
+        \centering
+        \textbf{Ghi chú hình ảnh UML}\\
+        Hiện tại chưa có file ảnh cho sơ đồ này. Sau khi export PlantUML, có thể thay phần này bằng hình ảnh: \texttt{#1}.
+      \end{minipage}
+    }
+  \end{center}
+}
+
+\newcommand{\umlimage}[1]{
+  \IfFileExists{#1}{
+    \begin{center}
+      \includegraphics[width=0.95\linewidth]{#1}
+    \end{center}
+  }{
+    \umlimageplaceholder{#1}
+  }
+}
+
+\title{\textbf{Báo cáo phân tích và thiết kế hệ thống VStay}\\
+\large Villa Booking System}
+\author{
+Sinh viên: Nguyễn Anh Khôi\\
+MSSV: SE194126\\
+Lớp: SE1936\\
+Môn học: SWD392\\
+Giảng viên: Nguyễn Đăng Hoàng Tuấn
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Giới thiệu}
+
+VStay là hệ thống đặt villa được xây dựng cho bài tập phân tích và thiết kế phần mềm. Hệ thống hỗ trợ khách hàng xem danh sách villa, tìm kiếm, lọc, xem chi tiết, tạo đặt phòng, hủy đặt phòng và thanh toán. Bên cạnh đó, quản trị viên có thể quản lý thông tin villa và cập nhật trạng thái đặt phòng.
+
+Bài toán xuất phát từ nhu cầu thay thế cách quản lý thủ công bằng điện thoại, tin nhắn hoặc sổ ghi chép. Khi không có hệ thống tập trung, thông tin villa, lịch đặt phòng và trạng thái thanh toán dễ bị thiếu nhất quán. VStay tập trung giải quyết các chức năng cốt lõi, phù hợp với phạm vi bài tập ở mức đại học.
+
+\subsection{Tổng quan dự án}
+
+\begin{longtable}{|p{0.28\linewidth}|p{0.62\linewidth}|}
+\hline
+\textbf{Mục} & \textbf{Mô tả} \\
+\hline
+Tên dự án & VStay Villa Booking System \\
+\hline
+Môn học & SWD392 - Software Design \\
+\hline
+Người dùng chính & Guest và Admin \\
+\hline
+Mục tiêu chính & Phân tích, thiết kế và hiện thực prototype backend đơn giản cho hệ thống đặt villa trong phạm vi bài tập học thuật. \\
+\hline
+Chức năng cốt lõi & Xem villa, quản lý booking, thanh toán mô phỏng, quản lý villa và quản lý trạng thái booking. \\
+\hline
+Công nghệ & Java, Spring Boot, Maven, Spring Data JPA, Spring Security, Swagger/OpenAPI và H2 demo database. \\
+\hline
+Repository & \href{https://github.com/kenji-cmyk/mini-booking-villa}{https://github.com/kenji-cmyk/mini-booking-villa} \\
+\hline
+\end{longtable}
+
+\subsection{Mục tiêu}
+
+\begin{itemize}[noitemsep]
+  \item Cho phép khách xem, tìm kiếm, lọc và xem chi tiết villa.
+  \item Cho phép khách tạo, xem, hủy đặt phòng và thanh toán.
+  \item Cho phép quản trị viên tạo, cập nhật, xóa và xem danh sách villa.
+  \item Cho phép quản trị viên xem tất cả booking và cập nhật trạng thái booking.
+  \item Trình bày đầy đủ các artifact phân tích, thiết kế, UML, design pattern và implementation prototype.
+\end{itemize}
+
+\subsection{Phạm vi}
+
+Hệ thống chỉ tập trung vào chức năng đặt villa cơ bản, quản lý villa, quản lý booking và thanh toán mô phỏng. Các chức năng như gợi ý bằng AI, loyalty, chat, marketplace nhiều chủ villa, mobile app, dynamic pricing và báo cáo tài chính nâng cao không nằm trong phạm vi.
+
+\section{Yêu cầu hệ thống}
+
+\subsection{Actor}
+
+\begin{longtable}{|p{0.22\linewidth}|p{0.68\linewidth}|}
+\hline
+\textbf{Actor} & \textbf{Mô tả} \\
+\hline
+Guest & Người dùng xem villa, tìm kiếm, tạo booking, hủy booking, thanh toán và xem trạng thái booking/payment. \\
+\hline
+Admin & Người quản trị quản lý thông tin villa và cập nhật trạng thái booking. \\
+\hline
+\end{longtable}
+
+\subsection{Yêu cầu chức năng}
+
+\begin{longtable}{|p{0.15\linewidth}|p{0.75\linewidth}|}
+\hline
+\textbf{ID} & \textbf{Yêu cầu} \\
+\hline
+FR-01--FR-04 & Guest có thể xem danh sách villa, tìm kiếm, lọc và xem chi tiết villa. \\
+\hline
+FR-05--FR-09 & Guest có thể tạo booking, hệ thống validate dữ liệu, kiểm tra availability, xem chi tiết và hủy booking hợp lệ. \\
+\hline
+FR-10--FR-12 & Guest có thể gửi thanh toán mô phỏng, hệ thống lưu thông tin payment và cho phép xem trạng thái payment. \\
+\hline
+FR-13--FR-16 & Admin có thể tạo, cập nhật, xóa và xem danh sách villa. Villa có active booking không được xóa. \\
+\hline
+FR-17--FR-20 & Admin có thể xem tất cả booking, xem chi tiết và cập nhật trạng thái booking theo rule hợp lệ. \\
+\hline
+\end{longtable}
+
+\subsection{Yêu cầu phi chức năng}
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Performance:} danh sách villa, tìm kiếm và chi tiết booking nên phản hồi trong khoảng 3 giây với dữ liệu demo.
+  \item \textbf{Security:} chỉ Admin được truy cập chức năng quản trị; thông tin thanh toán nhạy cảm không được hiển thị đầy đủ.
+  \item \textbf{Reliability:} không tạo booking trùng lịch cho cùng villa; trạng thái booking/payment phải nhất quán.
+  \item \textbf{Maintainability:} tách rõ controller, service, repository, entity, dto, mapper, payment và exception.
+  \item \textbf{Validation:} validate trường bắt buộc, ngày check-out sau check-in, số khách không vượt quá sức chứa villa.
+\end{itemize}
+
+\section{Use Case Diagram}
+
+\subsection{Prompt đã dùng cho AI}
+
+\begin{lstlisting}
+Create a UML use case diagram for a villa booking management system.
+
+Requirements:
+- Guests can view villas, search villas, view villa details,
+create bookings, cancel bookings, make payments, and view payment status.
+- Admins can create, update, delete, and manage villas and bookings.
+
+Generate a PlantUML use case diagram using Guest and Admin actors.
+Keep the diagram simple and suitable for a university software engineering assignment.
+\end{lstlisting}
+
+\subsection{Code UML}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/use-case-diagram.puml}
+
+\subsection{Hình ảnh UML}
+
+\umlimage{assets/use-case-diagram.png}
+
+\subsection{Giải thích ngắn gọn}
+
+Use case diagram thể hiện hai actor chính là Guest và Admin. Guest thực hiện các chức năng liên quan đến xem villa, tạo/hủy booking và thanh toán. Admin quản lý villa và trạng thái booking. Use case Create Booking bao gồm validate thông tin và kiểm tra villa availability để đảm bảo đúng business rule.
+
+\section{Package Diagram}
+
+\subsection{Prompt đã dùng cho AI}
+
+\begin{lstlisting}
+Create a UML package diagram for a Spring Boot villa booking management system.
+
+The system includes villa browsing, booking management, payment processing using MomoPay and VNPay, and admin management.
+Use a layered architecture with controller, service, payment, repository, entity, enums, dto, mapper, exception, and config packages.
+Include Strategy Pattern and Factory Pattern for payment processing.
+\end{lstlisting}
+
+\subsection{Code UML}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/package-diagram.puml}
+
+\subsection{Hình ảnh UML}
+
+\umlimage{assets/package-diagram.png}
+
+\subsection{Giải thích ngắn gọn}
+
+Package diagram mô tả backend theo kiến trúc phân lớp của Spring Boot. Controller nhận request, service xử lý nghiệp vụ, repository truy cập dữ liệu, entity/enums biểu diễn domain, dto/mapper kiểm soát dữ liệu vào ra API, exception xử lý lỗi và config chứa cấu hình bảo mật. Package payment tách riêng Strategy và Factory để hỗ trợ nhiều provider thanh toán.
+
+\section{Class Diagram}
+
+\subsection{Prompt đã dùng cho AI}
+
+\begin{lstlisting}
+Create a simple UML class diagram for a villa booking management system.
+
+The system includes guests and admins, villas, bookings, payments, booking status, and payment status.
+Only include the main domain classes, their basic attributes, simple methods, enum values, and relationships.
+Do not include technical implementation layers.
+\end{lstlisting}
+
+\subsection{Code UML}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/class-diagram.puml}
+
+\subsection{Hình ảnh UML}
+
+\umlimage{assets/class-diagram.png}
+
+\subsection{Giải thích ngắn gọn}
+
+Class diagram tập trung vào bốn domain chính: User, Villa, Booking và Payment. User có role Guest/Admin. Villa lưu thông tin villa và trạng thái active. Booking liên kết user với villa theo khoảng ngày và có trạng thái PENDING, CONFIRMED, CANCELLED, COMPLETED. Payment gắn với một booking và có trạng thái PENDING, SUCCESSFUL hoặc FAILED.
+
+\section{Sequence Diagrams}
+
+Các sequence diagram được tách theo workflow để dễ đọc và bám sát use case.
+
+\subsection{Prompt đã dùng cho AI}
+
+\begin{lstlisting}
+Create simple UML sequence diagrams for a villa booking management system.
+
+Actors:
+- Guest
+- Admin
+
+Separate the sequence diagrams by action:
+- Guest browses, searches, and views villas
+- Guest creates a booking
+- Guest cancels a booking
+- Guest makes a payment and views payment status
+- Admin manages villas
+- Admin views bookings and updates booking status
+
+Keep each diagram high-level and business-focused.
+Do not include technical implementation layers.
+\end{lstlisting}
+
+\subsection{Browse and View Villas}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-browse-villas.puml}
+\umlimage{assets/sequence-diagram-browse-villas.png}
+Guest yêu cầu danh sách hoặc kết quả tìm kiếm villa, hệ thống đọc dữ liệu phù hợp và trả về danh sách hoặc chi tiết villa.
+
+\subsection{Create Booking}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-create-booking.puml}
+\umlimage{assets/sequence-diagram-create-booking.png}
+Guest gửi thông tin booking. Hệ thống validate ngày, số khách, thông tin liên hệ và kiểm tra availability. Nếu hợp lệ, booking được lưu với trạng thái PENDING.
+
+\subsection{Cancel Booking}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-cancel-booking.puml}
+\umlimage{assets/sequence-diagram-cancel-booking.png}
+Guest yêu cầu hủy booking. Hệ thống tải booking, kiểm tra quyền sở hữu và điều kiện hủy. Nếu hợp lệ, trạng thái được cập nhật thành CANCELLED.
+
+\subsection{Make Payment and View Payment Status}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-payment.puml}
+\umlimage{assets/sequence-diagram-payment.png}
+Guest gửi payment cho booking. Hệ thống chọn strategy thanh toán, lưu kết quả payment và xác nhận booking nếu payment thành công. Guest cũng có thể xem lại trạng thái payment theo booking.
+
+\subsection{Admin Manage Villas}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-admin-manage-villas.puml}
+\umlimage{assets/sequence-diagram-admin-manage-villas.png}
+Admin tạo hoặc cập nhật villa sau khi hệ thống validate dữ liệu. Khi xóa villa, hệ thống kiểm tra active booking trước; nếu còn booking hoạt động thì từ chối xóa.
+
+\subsection{Admin Manage Bookings}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-admin-manage-bookings.puml}
+\umlimage{assets/sequence-diagram-admin-manage-bookings.png}
+Admin xem danh sách booking và cập nhật trạng thái. Hệ thống validate transition để tránh trạng thái booking không nhất quán.
+
+\section{Design Patterns}
+
+\begin{longtable}{|p{0.24\linewidth}|p{0.35\linewidth}|p{0.31\linewidth}|}
+\hline
+\textbf{Pattern} & \textbf{Vị trí áp dụng} & \textbf{Ý nghĩa} \\
+\hline
+Layered Architecture & \texttt{controller}, \texttt{service}, \texttt{repository}, \texttt{entity} & Tách trách nhiệm giữa API, nghiệp vụ, truy cập dữ liệu và domain, giúp hệ thống dễ bảo trì. \\
+\hline
+Repository Pattern & \texttt{VillaRepository}, \texttt{BookingRepository}, \texttt{PaymentRepository}, \texttt{UserRepository} & Ẩn chi tiết truy vấn database, giúp service làm việc qua interface dữ liệu rõ ràng. \\
+\hline
+DTO \& Mapper Pattern & Package \texttt{dto} và \texttt{mapper} & Không expose entity trực tiếp qua API, chuẩn hóa dữ liệu request/response và giảm phụ thuộc giữa API với database model. \\
+\hline
+Strategy Pattern & \texttt{PaymentStrategy}, \texttt{MomoPaymentStrategy}, \texttt{VNPayPaymentStrategy} & Tách thuật toán xử lý thanh toán theo provider, dễ mở rộng provider mới mà ít sửa logic chính. \\
+\hline
+Factory Pattern & \texttt{PaymentStrategyFactory} & Chọn strategy thanh toán dựa trên provider, giúp \texttt{PaymentService} không phụ thuộc trực tiếp vào class cụ thể. \\
+\hline
+\end{longtable}
+
+\subsection{Ghi chú UML design pattern}
+
+Các file PlantUML cho design pattern đã có trong thư mục \texttt{docs/uml}: \texttt{design-pattern-layered-architecture.puml}, \texttt{design-pattern-repository.puml}, \texttt{design-pattern-dto-mapper.puml}, \texttt{design-pattern-strategy.puml} và \texttt{design-pattern-factory.puml}. Khi cần đưa hình vào bản PDF cuối, có thể export các file này thành ảnh và chèn vào report.
+
+\section{Code Implementation}
+
+Prototype backend được hiện thực bằng Java Spring Boot, Maven, Spring Data JPA, Spring Security, OpenAPI/Swagger và H2 demo database. Source code chính nằm trong thư mục \texttt{backend/src/main/java/com/kna/vstay}.
+
+\begin{itemize}[noitemsep]
+  \item GitHub repository: \href{https://github.com/kenji-cmyk/mini-booking-villa}{https://github.com/kenji-cmyk/mini-booking-villa}
+  \item API public: \texttt{/api/villas}, \texttt{/api/bookings}, \texttt{/api/payments}
+  \item API admin: \texttt{/api/admin/villas}, \texttt{/api/admin/bookings}
+  \item Swagger UI khi chạy local: \texttt{http://localhost:8080/swagger-ui.html}
+\end{itemize}
+
+\subsection{Mức độ hoàn thiện}
+
+Implementation hiện đã bao phủ các use case chính từ UC-01 đến UC-14. Các rule quan trọng đã được xử lý gồm: kiểm tra booking trùng ngày, số khách không vượt sức chứa, ownership của guest khi xem/hủy booking hoặc xem/thanh toán payment, trạng thái payment PENDING/SUCCESSFUL/FAILED và transition hợp lệ cho booking status.
+
+\subsection{Kiểm thử}
+
+Theo tài liệu implementation overview, backend integration tests đã chạy thành công:
+
+\begin{lstlisting}
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+\end{lstlisting}
+
+\section{Kết luận}
+
+VStay đáp ứng phạm vi bài tập phân tích và thiết kế phần mềm với đầy đủ yêu cầu, use case, UML diagram, design pattern và prototype implementation. Thiết kế sử dụng kiến trúc phân lớp, repository, DTO/mapper, strategy và factory để đảm bảo code rõ ràng, dễ mở rộng và phù hợp với mục tiêu học thuật. Các workflow chính của Guest và Admin đã được mô tả bằng sequence diagram và được hiện thực trong backend prototype.
+
+\section*{Thông tin cần bổ sung trước khi nộp}
+
+\begin{itemize}[noitemsep]
+  \item Ảnh UML sau khi export từ các file PlantUML trong \texttt{docs/uml}.
+  \item Nếu giảng viên yêu cầu định dạng riêng, có thể bổ sung bìa, nhận xét giảng viên hoặc phụ lục.
+\end{itemize}
+
+\end{document}

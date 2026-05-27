@@ -1,0 +1,356 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+\lstdefinelanguage{PlantUML}{
+  morekeywords={@startuml,@enduml,actor,participant,database,rectangle,usecase,class,interface,enum,package,alt,else,end,skinparam,left,right,direction},
+  sensitive=true,
+  morecomment=[l]{'},
+  morestring=[b]"
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=2
+}
+
+\newcommand{\umlimageplaceholder}[1]{
+  \begin{center}
+    \fbox{
+      \begin{minipage}{0.9\linewidth}
+        \centering
+        \textbf{UML Image Note}\\
+        The image file is not available yet. After exporting the PlantUML source, this placeholder can be replaced with: \texttt{#1}.
+      \end{minipage}
+    }
+  \end{center}
+}
+
+\newcommand{\umlimage}[1]{
+  \IfFileExists{#1}{
+    \begin{center}
+      \includegraphics[width=0.95\linewidth]{#1}
+    \end{center}
+  }{
+    \umlimageplaceholder{#1}
+  }
+}
+
+\title{\textbf{Analysis and Design Report for VStay}\\
+\large Villa Booking System}
+\author{
+Student: Nguyen Anh Khoi\\
+Student ID: SE194126\\
+Class: SE1936\\
+Course: SWD392\\
+Lecturer: Nguyen Dang Hoang Tuan
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+VStay is a villa booking system developed for a software analysis and design assignment. The system allows guests to browse villas, search and filter villa information, view villa details, create bookings, cancel bookings, and make simulated payments. It also provides administration features for managing villas and booking statuses.
+
+The problem comes from small accommodation businesses that often manage villa information, bookings, and payments manually through phone calls, messages, or notes. Without a centralized system, information can become inconsistent and booking records can be difficult to track. VStay focuses on the essential workflows required for an academic software design project.
+
+\subsection{Project Summary}
+
+\begin{longtable}{|p{0.28\linewidth}|p{0.62\linewidth}|}
+\hline
+\textbf{Item} & \textbf{Description} \\
+\hline
+Project name & VStay Villa Booking System \\
+\hline
+Course & SWD392 - Software Design \\
+\hline
+Main users & Guest and Admin \\
+\hline
+Main purpose & Analyze, design, and implement a simple villa booking backend prototype for an academic assignment. \\
+\hline
+Core features & Villa browsing, booking management, payment simulation, villa administration, and booking status management. \\
+\hline
+Technology stack & Java, Spring Boot, Maven, Spring Data JPA, Spring Security, Swagger/OpenAPI, and H2 demo database. \\
+\hline
+Repository & \href{https://github.com/kenji-cmyk/mini-booking-villa}{https://github.com/kenji-cmyk/mini-booking-villa} \\
+\hline
+\end{longtable}
+
+\subsection{Objectives}
+
+\begin{itemize}[noitemsep]
+  \item Allow guests to view, search, filter, and inspect villa details.
+  \item Allow guests to create, view, cancel bookings, and make payments.
+  \item Allow admins to create, update, delete, and view villa records.
+  \item Allow admins to view all bookings and update booking statuses.
+  \item Provide complete analysis and design artifacts, including requirements, UML diagrams, design patterns, and an implementation prototype.
+\end{itemize}
+
+\subsection{Scope}
+
+The project scope is intentionally limited to core villa booking features, villa management, booking management, and simplified payment handling. Advanced commercial features such as AI recommendations, loyalty programs, chat, multi-vendor marketplace support, mobile applications, dynamic pricing, and advanced financial reports are out of scope.
+
+\section{System Requirements}
+
+\subsection{Actors}
+
+\begin{longtable}{|p{0.22\linewidth}|p{0.68\linewidth}|}
+\hline
+\textbf{Actor} & \textbf{Description} \\
+\hline
+Guest & A user who browses villas, searches and filters villas, creates bookings, cancels bookings, makes payments, and checks booking or payment status. \\
+\hline
+Admin & A system user responsible for managing villa information and updating booking status. \\
+\hline
+\end{longtable}
+
+\subsection{Functional Requirements}
+
+\begin{longtable}{|p{0.15\linewidth}|p{0.75\linewidth}|}
+\hline
+\textbf{ID} & \textbf{Requirement Summary} \\
+\hline
+FR-01--FR-04 & Guests can view the villa list, search, filter, and view villa details. \\
+\hline
+FR-05--FR-09 & Guests can create bookings, while the system validates data, checks availability, shows booking details, and allows eligible cancellation. \\
+\hline
+FR-10--FR-12 & Guests can submit a simulated payment, the system records payment information, and guests can view payment status. \\
+\hline
+FR-13--FR-16 & Admins can create, update, delete, and view villa records. Villas with active bookings cannot be deleted. \\
+\hline
+FR-17--FR-20 & Admins can view all bookings, view booking details, and update booking status according to valid business rules. \\
+\hline
+\end{longtable}
+
+\subsection{Non-Functional Requirements}
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Performance:} villa lists, search results, and booking details should respond within about 3 seconds for demo data.
+  \item \textbf{Security:} admin functions must be restricted to authorized admin users; sensitive payment data must not be fully exposed.
+  \item \textbf{Reliability:} the system must prevent duplicate active bookings for the same villa and overlapping dates.
+  \item \textbf{Maintainability:} the backend must clearly separate controller, service, repository, entity, DTO, mapper, payment, and exception responsibilities.
+  \item \textbf{Validation:} required fields, booking dates, guest count, and payment information must be validated at system boundaries.
+\end{itemize}
+
+\section{Use Case Diagram}
+
+\subsection{AI Prompt Used}
+
+\begin{lstlisting}
+Create a UML use case diagram for a villa booking management system.
+
+Requirements:
+- Guests can view villas, search villas, view villa details,
+create bookings, cancel bookings, make payments, and view payment status.
+- Admins can create, update, delete, and manage villas and bookings.
+
+Generate a PlantUML use case diagram using Guest and Admin actors.
+Keep the diagram simple and suitable for a university software engineering assignment.
+\end{lstlisting}
+
+\subsection{UML Code}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/use-case-diagram.puml}
+
+\subsection{UML Image}
+
+\umlimage{assets/use-case-diagram.png}
+
+\subsection{Short Explanation}
+
+The use case diagram shows two main actors: Guest and Admin. Guests handle villa browsing, booking, cancellation, and payment actions. Admins manage villa records and booking statuses. The Create Booking use case includes validation and availability checking because these are mandatory business rules.
+
+\section{Package Diagram}
+
+\subsection{AI Prompt Used}
+
+\begin{lstlisting}
+Create a UML package diagram for a Spring Boot villa booking management system.
+
+The system includes villa browsing, booking management, payment processing using MomoPay and VNPay, and admin management.
+Use a layered architecture with controller, service, payment, repository, entity, enums, dto, mapper, exception, and config packages.
+Include Strategy Pattern and Factory Pattern for payment processing.
+\end{lstlisting}
+
+\subsection{UML Code}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/package-diagram.puml}
+
+\subsection{UML Image}
+
+\umlimage{assets/package-diagram.png}
+
+\subsection{Short Explanation}
+
+The package diagram describes the Spring Boot backend using a layered structure. Controllers receive API requests, services handle business logic, repositories access data, entities and enums represent the domain model, DTOs and mappers control API data transfer, exceptions centralize error handling, and config stores security configuration. The payment package applies Strategy and Factory patterns for provider-based payment processing.
+
+\section{Class Diagram}
+
+\subsection{AI Prompt Used}
+
+\begin{lstlisting}
+Create a simple UML class diagram for a villa booking management system.
+
+The system includes guests and admins, villas, bookings, payments, booking status, and payment status.
+Only include the main domain classes, their basic attributes, simple methods, enum values, and relationships.
+Do not include technical implementation layers.
+\end{lstlisting}
+
+\subsection{UML Code}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/class-diagram.puml}
+
+\subsection{UML Image}
+
+\umlimage{assets/class-diagram.png}
+
+\subsection{Short Explanation}
+
+The class diagram focuses on four core domain classes: User, Villa, Booking, and Payment. User represents both guests and admins through the Role enum. Villa stores villa information and active status. Booking connects a user to a villa for a date range and tracks booking status. Payment belongs to one booking and stores the simplified payment result.
+
+\section{Sequence Diagrams}
+
+The sequence diagrams are separated by workflow to keep each behavior readable and aligned with the use cases.
+
+\subsection{AI Prompt Used}
+
+\begin{lstlisting}
+Create simple UML sequence diagrams for a villa booking management system.
+
+Actors:
+- Guest
+- Admin
+
+Separate the sequence diagrams by action:
+- Guest browses, searches, and views villas
+- Guest creates a booking
+- Guest cancels a booking
+- Guest makes a payment and views payment status
+- Admin manages villas
+- Admin views bookings and updates booking status
+
+Keep each diagram high-level and business-focused.
+Do not include technical implementation layers.
+\end{lstlisting}
+
+\subsection{Browse and View Villas}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-browse-villas.puml}
+\umlimage{assets/sequence-diagram-browse-villas.png}
+The guest requests a villa list or search result. The system loads matching villas and returns the list or selected villa details.
+
+\subsection{Create Booking}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-create-booking.puml}
+\umlimage{assets/sequence-diagram-create-booking.png}
+The guest submits booking information. The system validates dates, guest count, contact information, and villa availability. If valid, the booking is saved with PENDING status.
+
+\subsection{Cancel Booking}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-cancel-booking.puml}
+\umlimage{assets/sequence-diagram-cancel-booking.png}
+The guest requests booking cancellation. The system loads the booking, checks ownership and cancellation eligibility, then updates the status to CANCELLED if the request is valid.
+
+\subsection{Make Payment and View Payment Status}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-payment.puml}
+\umlimage{assets/sequence-diagram-payment.png}
+The guest submits payment for a booking. The system selects a payment strategy, records the payment result, and confirms the booking if the payment succeeds. The guest can also request the payment status later.
+
+\subsection{Admin Manage Villas}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-admin-manage-villas.puml}
+\umlimage{assets/sequence-diagram-admin-manage-villas.png}
+The admin creates or updates villa information after validation. When deleting a villa, the system checks for active bookings and rejects deletion if active bookings still exist.
+
+\subsection{Admin Manage Bookings}
+
+\lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-admin-manage-bookings.puml}
+\umlimage{assets/sequence-diagram-admin-manage-bookings.png}
+The admin views all bookings and updates booking status. The system validates status transitions to keep booking state consistent.
+
+\section{Design Patterns}
+
+\begin{longtable}{|p{0.24\linewidth}|p{0.35\linewidth}|p{0.31\linewidth}|}
+\hline
+\textbf{Pattern} & \textbf{Applied In} & \textbf{Purpose} \\
+\hline
+Layered Architecture & \texttt{controller}, \texttt{service}, \texttt{repository}, \texttt{entity} & Separates API handling, business logic, data access, and domain representation. \\
+\hline
+Repository Pattern & \texttt{VillaRepository}, \texttt{BookingRepository}, \texttt{PaymentRepository}, \texttt{UserRepository} & Hides database query details and allows services to work through clean repository interfaces. \\
+\hline
+DTO \& Mapper Pattern & \texttt{dto} and \texttt{mapper} packages & Prevents direct exposure of entities through APIs and centralizes request/response conversion. \\
+\hline
+Strategy Pattern & \texttt{PaymentStrategy}, \texttt{MomoPaymentStrategy}, \texttt{VNPayPaymentStrategy} & Separates payment behavior by provider and makes it easier to add new providers. \\
+\hline
+Factory Pattern & \texttt{PaymentStrategyFactory} & Selects the correct payment strategy by provider and keeps \texttt{PaymentService} decoupled from concrete classes. \\
+\hline
+\end{longtable}
+
+\subsection{Design Pattern UML Note}
+
+PlantUML files for the design patterns are available in \texttt{docs/uml}: \texttt{design-pattern-layered-architecture.puml}, \texttt{design-pattern-repository.puml}, \texttt{design-pattern-dto-mapper.puml}, \texttt{design-pattern-strategy.puml}, and \texttt{design-pattern-factory.puml}. They can be exported as images and inserted into the final PDF if required.
+
+\section{Code Implementation}
+
+The backend prototype is implemented with Java Spring Boot, Maven, Spring Data JPA, Spring Security, Swagger/OpenAPI, and an H2 demo database. The main source code is located in \texttt{backend/src/main/java/com/kna/vstay}.
+
+\begin{itemize}[noitemsep]
+  \item GitHub repository: \href{https://github.com/kenji-cmyk/mini-booking-villa}{https://github.com/kenji-cmyk/mini-booking-villa}
+  \item Public APIs: \texttt{/api/villas}, \texttt{/api/bookings}, \texttt{/api/payments}
+  \item Admin APIs: \texttt{/api/admin/villas}, \texttt{/api/admin/bookings}
+  \item Local Swagger UI: \texttt{http://localhost:8080/swagger-ui.html}
+\end{itemize}
+
+\subsection{Implementation Status}
+
+The implementation covers the main use cases from UC-01 to UC-14. Important rules are implemented, including overlapping booking prevention, guest count validation, guest ownership checks for booking and payment actions, payment statuses PENDING/SUCCESSFUL/FAILED, and valid booking status transitions.
+
+\subsection{Testing}
+
+According to the implementation overview, backend integration tests completed successfully:
+
+\begin{lstlisting}
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+\end{lstlisting}
+
+\section{Conclusion}
+
+VStay satisfies the assignment scope with requirements, use cases, UML diagrams, design patterns, and a backend implementation prototype. The system uses layered architecture, repository, DTO/mapper, strategy, and factory patterns to keep the design clear, maintainable, and suitable for academic demonstration. The main Guest and Admin workflows are described through sequence diagrams and implemented in the backend prototype.
+
+\section*{Remaining Items Before Submission}
+
+\begin{itemize}[noitemsep]
+  \item Export UML images from the PlantUML files in \texttt{docs/uml}.
+  \item Add any required cover-page or formatting details if requested by the lecturer.
+\end{itemize}
+
+\end{document}
