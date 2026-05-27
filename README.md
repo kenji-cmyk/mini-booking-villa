@@ -36,7 +36,7 @@ The system focuses on core booking workflows only. Features such as chat, loyalt
 
 ### Class Diagram
 
-<img src="report/assets/class-diagram.png" width="560" alt="VStay class diagram">
+<img src="report/assets/class-diagram.png" width="620" alt="VStay class diagram">
 
 More diagrams are available in:
 
