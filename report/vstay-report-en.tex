@@ -8,6 +8,7 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{caption}
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{enumitem}
@@ -18,6 +19,10 @@
   linkcolor=blue,
   urlcolor=blue
 }
+\urlstyle{same}
+\Urlmuskip=0mu plus 2mu\relax
+\setlength{\emergencystretch}{4em}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 \lstdefinelanguage{PlantUML}{
   morekeywords={@startuml,@enduml,actor,participant,database,rectangle,usecase,class,interface,enum,package,alt,else,end,skinparam,left,right,direction},
@@ -33,6 +38,7 @@
   columns=fullflexible,
   keepspaces=true,
   showstringspaces=false,
+  breakatwhitespace=false,
   tabsize=2
 }
 
@@ -48,14 +54,22 @@
   \end{center}
 }
 
-\newcommand{\umlimage}[1]{
-  \IfFileExists{#1}{
-    \begin{center}
-      \includegraphics[width=0.95\linewidth]{#1}
-    \end{center}
-  }{
-    \umlimageplaceholder{#1}
-  }
+\newcommand{\umlfigure}[3]{
+  \begin{center}
+    \centering
+    \IfFileExists{#1}{
+      \includegraphics[width=0.88\linewidth,height=#3,keepaspectratio]{#1}
+    }{
+      \fbox{
+        \begin{minipage}{0.82\linewidth}
+          \centering
+          \textbf{UML Image Note}\\
+          The image file is not available yet. After exporting the PlantUML source, this placeholder can be replaced with: \texttt{#1}.
+        \end{minipage}
+      }
+    }
+    \captionof{figure}{#2}
+  \end{center}
 }
 
 \title{\textbf{Analysis and Design Report for VStay}\\
@@ -83,7 +97,7 @@ The problem comes from small accommodation businesses that often manage villa in
 
 \subsection{Project Summary}
 
-\begin{longtable}{|p{0.28\linewidth}|p{0.62\linewidth}|}
+\begin{longtable}{|L{0.28\linewidth}|L{0.62\linewidth}|}
 \hline
 \textbf{Item} & \textbf{Description} \\
 \hline
@@ -121,7 +135,7 @@ The project scope is intentionally limited to core villa booking features, villa
 
 \subsection{Actors}
 
-\begin{longtable}{|p{0.22\linewidth}|p{0.68\linewidth}|}
+\begin{longtable}{|L{0.22\linewidth}|L{0.68\linewidth}|}
 \hline
 \textbf{Actor} & \textbf{Description} \\
 \hline
@@ -133,7 +147,7 @@ Admin & A system user responsible for managing villa information and updating bo
 
 \subsection{Functional Requirements}
 
-\begin{longtable}{|p{0.15\linewidth}|p{0.75\linewidth}|}
+\begin{longtable}{|L{0.18\linewidth}|L{0.72\linewidth}|}
 \hline
 \textbf{ID} & \textbf{Requirement Summary} \\
 \hline
@@ -181,7 +195,7 @@ Keep the diagram simple and suitable for a university software engineering assig
 
 \subsection{UML Image}
 
-\umlimage{assets/use-case-diagram.png}
+\umlfigure{assets/use-case-diagram.png}{Use Case Diagram of VStay}{0.48\textheight}
 
 \subsection{Short Explanation}
 
@@ -205,7 +219,7 @@ Include Strategy Pattern and Factory Pattern for payment processing.
 
 \subsection{UML Image}
 
-\umlimage{assets/package-diagram.png}
+\umlfigure{assets/package-diagram.png}{Package Diagram of the VStay Backend}{0.56\textheight}
 
 \subsection{Short Explanation}
 
@@ -229,7 +243,7 @@ Do not include technical implementation layers.
 
 \subsection{UML Image}
 
-\umlimage{assets/class-diagram.png}
+\umlfigure{assets/class-diagram.png}{Core Domain Class Diagram}{0.50\textheight}
 
 \subsection{Short Explanation}
 
@@ -263,60 +277,68 @@ Do not include technical implementation layers.
 \subsection{Browse and View Villas}
 
 \lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-browse-villas.puml}
-\umlimage{assets/sequence-diagram-browse-villas.png}
+\umlfigure{assets/sequence-diagram-browse-villas.png}{Sequence Diagram for Browsing and Viewing Villas}{0.38\textheight}
 The guest requests a villa list or search result. The system loads matching villas and returns the list or selected villa details.
 
 \subsection{Create Booking}
 
 \lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-create-booking.puml}
-\umlimage{assets/sequence-diagram-create-booking.png}
+\umlfigure{assets/sequence-diagram-create-booking.png}{Sequence Diagram for Creating a Booking}{0.42\textheight}
 The guest submits booking information. The system validates dates, guest count, contact information, and villa availability. If valid, the booking is saved with PENDING status.
 
 \subsection{Cancel Booking}
 
 \lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-cancel-booking.puml}
-\umlimage{assets/sequence-diagram-cancel-booking.png}
+\umlfigure{assets/sequence-diagram-cancel-booking.png}{Sequence Diagram for Cancelling a Booking}{0.42\textheight}
 The guest requests booking cancellation. The system loads the booking, checks ownership and cancellation eligibility, then updates the status to CANCELLED if the request is valid.
 
 \subsection{Make Payment and View Payment Status}
 
 \lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-payment.puml}
-\umlimage{assets/sequence-diagram-payment.png}
+\umlfigure{assets/sequence-diagram-payment.png}{Sequence Diagram for Payment and Payment Status}{0.48\textheight}
 The guest submits payment for a booking. The system selects a payment strategy, records the payment result, and confirms the booking if the payment succeeds. The guest can also request the payment status later.
 
 \subsection{Admin Manage Villas}
 
 \lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-admin-manage-villas.puml}
-\umlimage{assets/sequence-diagram-admin-manage-villas.png}
+\umlfigure{assets/sequence-diagram-admin-manage-villas.png}{Sequence Diagram for Admin Villa Management}{0.45\textheight}
 The admin creates or updates villa information after validation. When deleting a villa, the system checks for active bookings and rejects deletion if active bookings still exist.
 
 \subsection{Admin Manage Bookings}
 
 \lstinputlisting[language=PlantUML]{../docs/uml/sequence-diagram-admin-manage-bookings.puml}
-\umlimage{assets/sequence-diagram-admin-manage-bookings.png}
+\umlfigure{assets/sequence-diagram-admin-manage-bookings.png}{Sequence Diagram for Admin Booking Management}{0.38\textheight}
 The admin views all bookings and updates booking status. The system validates status transitions to keep booking state consistent.
 
 \section{Design Patterns}
 
-\begin{longtable}{|p{0.24\linewidth}|p{0.35\linewidth}|p{0.31\linewidth}|}
+\begin{longtable}{|L{0.24\linewidth}|L{0.32\linewidth}|L{0.34\linewidth}|}
 \hline
 \textbf{Pattern} & \textbf{Applied In} & \textbf{Purpose} \\
 \hline
-Layered Architecture & \texttt{controller}, \texttt{service}, \texttt{repository}, \texttt{entity} & Separates API handling, business logic, data access, and domain representation. \\
+Layered Architecture & Controller, service, repository, and entity packages & Separates API handling, business logic, data access, and domain representation. \\
 \hline
-Repository Pattern & \texttt{VillaRepository}, \texttt{BookingRepository}, \texttt{PaymentRepository}, \texttt{UserRepository} & Hides database query details and allows services to work through clean repository interfaces. \\
+Repository Pattern & Repository interfaces & Hides database query details and allows services to work through clean repository interfaces. \\
 \hline
-DTO \& Mapper Pattern & \texttt{dto} and \texttt{mapper} packages & Prevents direct exposure of entities through APIs and centralizes request/response conversion. \\
+DTO \& Mapper Pattern & DTO and mapper packages & Prevents direct exposure of entities through APIs and centralizes request/response conversion. \\
 \hline
-Strategy Pattern & \texttt{PaymentStrategy}, \texttt{MomoPaymentStrategy}, \texttt{VNPayPaymentStrategy} & Separates payment behavior by provider and makes it easier to add new providers. \\
+Strategy Pattern & Payment strategy classes & Separates payment behavior by provider and makes it easier to add new providers. \\
 \hline
-Factory Pattern & \texttt{PaymentStrategyFactory} & Selects the correct payment strategy by provider and keeps \texttt{PaymentService} decoupled from concrete classes. \\
+Factory Pattern & Payment strategy factory & Selects the correct payment strategy by provider and keeps the payment service decoupled from concrete classes. \\
 \hline
 \end{longtable}
 
 \subsection{Design Pattern UML Note}
 
-PlantUML files for the design patterns are available in \texttt{docs/uml}: \texttt{design-pattern-layered-architecture.puml}, \texttt{design-pattern-repository.puml}, \texttt{design-pattern-dto-mapper.puml}, \texttt{design-pattern-strategy.puml}, and \texttt{design-pattern-factory.puml}. They can be exported as images and inserted into the final PDF if required.
+PlantUML files for the design patterns are available in \path{docs/uml}. The relevant files are:
+
+\begin{itemize}[noitemsep]
+  \item \path{design-pattern-layered-architecture.puml}
+  \item \path{design-pattern-repository.puml}
+  \item \path{design-pattern-dto-mapper.puml}
+  \item \path{design-pattern-strategy.puml}
+  \item \path{design-pattern-factory.puml}
+\end{itemize}
 
 \section{Code Implementation}
 
@@ -331,26 +353,25 @@ The backend prototype is implemented with Java Spring Boot, Maven, Spring Data J
 
 \subsection{Implementation Status}
 
-The implementation covers the main use cases from UC-01 to UC-14. Important rules are implemented, including overlapping booking prevention, guest count validation, guest ownership checks for booking and payment actions, payment statuses PENDING/SUCCESSFUL/FAILED, and valid booking status transitions.
-
-\subsection{Testing}
-
-According to the implementation overview, backend integration tests completed successfully:
-
-\begin{lstlisting}
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS
-\end{lstlisting}
+The implementation covers the main use cases from UC-01 to UC-14. Important rules are implemented, including overlapping booking prevention, guest count validation, guest ownership checks for booking and payment actions, payment statuses PENDING, SUCCESSFUL, and FAILED, and valid booking status transitions.
 
 \section{Conclusion}
 
 VStay satisfies the assignment scope with requirements, use cases, UML diagrams, design patterns, and a backend implementation prototype. The system uses layered architecture, repository, DTO/mapper, strategy, and factory patterns to keep the design clear, maintainable, and suitable for academic demonstration. The main Guest and Admin workflows are described through sequence diagrams and implemented in the backend prototype.
 
-\section*{Remaining Items Before Submission}
+\section{References}
 
-\begin{itemize}[noitemsep]
-  \item Export UML images from the PlantUML files in \texttt{docs/uml}.
-  \item Add any required cover-page or formatting details if requested by the lecturer.
-\end{itemize}
+\begin{enumerate}[label={[\arabic*]},noitemsep]
+  \item Object Management Group. \textit{OMG Unified Modeling Language Specification}. \url{https://www.omg.org/spec/UML/}
+  \item PlantUML. \textit{Use Case Diagram Syntax and Features}. \url{https://plantuml.com/use-case-diagram}
+  \item PlantUML. \textit{Class Diagram Syntax and Features}. \url{https://plantuml.com/class-diagram}
+  \item PlantUML. \textit{Sequence Diagram Syntax and Features}. \url{https://plantuml.com/sequence-diagram}
+  \item PlantUML. \textit{Deployment and Package Diagram Syntax}. \url{https://plantuml.com/deployment-diagram}
+  \item Visual Paradigm. \textit{UML Diagram Tutorials and Examples}. \url{https://www.visual-paradigm.com/guide/uml-unified-modeling-language/what-is-uml/}
+  \item Martin Fowler. \textit{Patterns of Enterprise Application Architecture}. Addison-Wesley, 2002.
+  \item Refactoring.Guru. \textit{Design Patterns}. \url{https://refactoring.guru/design-patterns}
+  \item Spring. \textit{Spring Boot Reference Documentation}. \url{https://docs.spring.io/spring-boot/reference/}
+  \item Spring. \textit{Spring Data JPA Reference Documentation}. \url{https://docs.spring.io/spring-data/jpa/reference/}
+\end{enumerate}
 
 \end{document}
