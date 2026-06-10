@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "VStay",
+    "slug": "vstay-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "vstay",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.kna.vstay"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "apiBaseUrl": "http://localhost:8080"
+    }
+  }
+}
