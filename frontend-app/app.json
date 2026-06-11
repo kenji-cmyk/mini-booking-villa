@@ -16,7 +16,7 @@
       "bundler": "metro"
     },
     "extra": {
-      "apiBaseUrl": "http://localhost:8080"
+      "apiBaseUrl": "http://192.168.1.91:8080"
     }
   }
 }
