@@ -4,8 +4,21 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: vstay-backend
-    ports:
-      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: demo
+    expose:
+      - "8080"
+    restart: unless-stopped
+
+  vstay-frontend-web:
+    build:
+      context: ./frontend-web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ""
+    container_name: vstay-frontend-web
+    depends_on:
+      - vstay-backend
+    ports:
+      - "80:80"
     restart: unless-stopped
